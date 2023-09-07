@@ -1,48 +1,48 @@
-import { useState } from "react"
-import { useFetch } from "./useFetch"
-
-const URLS = { USERS: "http://localhost:4000/gallery" }
+import { useState, useEffect } from "react"
+import ImageComp from "./ImageComp.jsx"
+import Form from "./Form.jsx"
+import Pagination from "./Pagination.jsx"
+import "./App.css"
 
 function App() {
-  const [url, setUrl] = useState(URLS.USERS)
+  const [images, setImages] = useState([])
+  const [loading, setLoading] = useState(false)
 
-  const { data, isLoading, isError } = useFetch(url)
-  console.log(data, isLoading, isError)
+  useEffect(() => {
+    const fetchImages = async () => {
+      const res = await fetch("http://localhost:4000/gallery")
+      const data = await res.json()
+      setImages(data)
+      setLoading(false)
+    }
+    fetchImages()
+  }, [])
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [imagesPerPage] = useState(20)
+
+  const indexOfLastImage = currentPage * imagesPerPage
+  const indexOfFirstImage = indexOfLastImage - imagesPerPage
+  const currentImages = images.slice(indexOfFirstImage, indexOfLastImage)
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber)
+
+  // Check if data is available and not loading or in error state
+  if (loading) {
+    return <h2>Loading...</h2>
+  } else if (images.length === 0) {
+    return <p>No images to display.</p>
+  }
+
   return (
     <>
-      <div>
-        <label>
-          <input
-            type="radio"
-            checked={url === URLS.USERS}
-            onChange={() => setUrl(URLS.USERS)}
-          />
-          Users
-        </label>
-        {/* <label>
-          <input
-            type="radio"
-            checked={url === URLS.POSTS}
-            onChange={() => setUrl(URLS.POSTS)}
-          />
-          Posts
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={url === URLS.COMMENTS}
-            onChange={() => setUrl(URLS.COMMENTS)}
-          />
-          Comments
-        </label> */}
-      </div>
-      {isLoading ? (
-        <h1>Loading...</h1>
-      ) : isError ? (
-        <h1>Error</h1>
-      ) : (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      )}
+      <Form />
+      <ImageComp images={currentImages} loading={loading} />
+      <Pagination
+        imagesPerPage={imagesPerPage}
+        totalImages={images.length}
+        paginate={paginate}
+      />
     </>
   )
 }
