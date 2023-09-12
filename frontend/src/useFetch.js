@@ -18,6 +18,3 @@ export function useFetch(url) {
 
   return { data, isLoading, isError }
 }
-
-// fetch(`url`).then(res => res.json()).then(data => {
-//     console.log(data)

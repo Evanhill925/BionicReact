@@ -7,9 +7,9 @@ router.get("/", (req, res) => {})
 router.get("/gallery", async (req, res) => {
   const entry = schemas.Entry
   const pulledFromDb = await entry.find({}).exec()
-  let fiftyHeldItems = pulledFromDb.slice(-300).reverse()
-  if (fiftyHeldItems) {
-    res.send(JSON.stringify(fiftyHeldItems))
+  let heldItems = pulledFromDb.slice(-300).reverse()
+  if (heldItems) {
+    res.send(JSON.stringify(heldItems))
   }
 })
 
