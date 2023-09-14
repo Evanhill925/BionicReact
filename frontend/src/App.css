@@ -2,3 +2,24 @@
   max-width: 200px;
   max-height: 200px;
 }
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-list {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar-list li {
+  margin-right: 20px; /* Adjust as needed for spacing between items */
+}
+
+.navbar-list li:last-child {
+  margin-right: 0; /* Remove margin from the last item */
+}

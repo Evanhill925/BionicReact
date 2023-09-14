@@ -1,6 +1,6 @@
 import { useRef } from "react"
 
-export default function Form({ originals, onFilterChange }) {
+export default function Form({ originals, onFilterChange, formText }) {
   const galleryRef = useRef()
 
   function handleSubmit(e) {
@@ -15,7 +15,7 @@ export default function Form({ originals, onFilterChange }) {
   return (
     <div>
       <form onSubmit={handleSubmit} id="gallery-form">
-        <label htmlFor="gallery-search">Search the gallery!</label>
+        <label htmlFor="gallery-search">{formText}</label>
         <input id="gallerySearch" type="text" ref={galleryRef} />
         <button type="submit">Submit</button>
       </form>
