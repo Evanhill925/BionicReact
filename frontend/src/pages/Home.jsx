@@ -10,7 +10,7 @@ export function Home() {
 
   useEffect(() => {
     const fetchImages = async () => {
-      const res = await fetch("http://localhost:4000/home")
+      const res = await fetch("http://localhost:4000/gallery/6")
       const data = await res.json()
       setImages(data)
       setOriginals(data)
