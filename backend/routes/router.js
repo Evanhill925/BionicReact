@@ -4,7 +4,7 @@ const schemas = require("../models/schemas")
 
 router.get("/", (req, res) => {})
 
-router.get("/gallery/:num", async (req, res) => {
+router.get("/userImages/:num", async (req, res) => {
   const entry = schemas.Entry
   const pulledFromDb = await entry.find({}).exec()
   let heldItems = pulledFromDb.slice(-Number(req.params.num)).reverse()
@@ -22,9 +22,5 @@ router.get("/home", async (req, res) => {
     res.send(JSON.stringify(heldItems))
   }
 })
-
-
-
-
 
 module.exports = router

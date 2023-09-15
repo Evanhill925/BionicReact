@@ -23,3 +23,31 @@
 .navbar-list li:last-child {
   margin-right: 0; /* Remove margin from the last item */
 }
+
+.home-grid {
+  display: grid;
+  grid-template-rows: auto; /* Set rows to 'auto' to allow content to determine the height */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(100px, 1fr)
+  ); /* Create a row of items */
+  grid-gap: 2px;
+}
+
+#main-image {
+  text-align: center; /* Center the contents horizontally */
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  max-width: 600px;
+  max-height: 600px;
+  padding-bottom: 20px;
+}
+#large-image {
+  min-height: 500px;
+  min-width: 500px;
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 600px;
+}

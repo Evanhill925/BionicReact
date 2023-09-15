@@ -12,7 +12,7 @@ export function Gallery() {
 
   useEffect(() => {
     const fetchImages = async () => {
-      const res = await fetch("http://localhost:4000/gallery/300")
+      const res = await fetch("http://localhost:4000/userImages/300") // this is the number of images that are fetched from the database
       const data = await res.json()
       setImages(data)
       setOriginals(data)

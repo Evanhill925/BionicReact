@@ -6,12 +6,14 @@ export default function ImageComp({ images }) {
     return <p>No images to display.</p>
   }
   return (
-    <div>
-      {images.map((image) => (
-        <div className="image" key={image.id}>
-          <img src={image.image_url} id="ImageSlot" alt="Image" />
-        </div>
-      ))}
+    <div class="container">
+      <div className="home-grid">
+        {images.map((image) => (
+          <div className="image" key={image.id}>
+            <img src={image.image_url} id="ImageSlot" alt="Image" />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
