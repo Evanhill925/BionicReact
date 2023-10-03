@@ -46,7 +46,8 @@ export function Home() {
       <Form formText={"Enter a prompt!"} />
 
       <MainImage singleImage={singleImage} />
-      <Button />
+      {/* <Button dothis={}/> */}
+      {/* <FormTo/> */}
       <ImageComp images={images} />
     </>
   )

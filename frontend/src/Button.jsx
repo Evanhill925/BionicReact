@@ -1,10 +1,8 @@
 import React from "react"
 
-export function Button() {
-  function onClick() {
-    console.log("Button Clicked")
-    // do something here
-  }
+export function Button(dothis) {
 
-  return <button onClick={onClick}>IAN TEST BUTTON</button>
+  // test_value = 'hat dog'
+
+  return <button onClick={dothis}>IAN TEST BUTTON</button>
 }

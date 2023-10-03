@@ -21,6 +21,29 @@ export function Gallery() {
     fetchImages()
   }, [])
 
+
+  useEffect(() => {
+    const fetchImages = async () => {
+
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userInput: 'hat frog ',model:'--quality .25' })
+    };
+      const res = await fetch("http://localhost:4000/Prompt",requestOptions) // this is the number of images that are fetched from the database
+      const data = await res
+      // setImages(data)
+      // setOriginals(data)
+      // setLoading(false)
+      console.log('hat daddy')
+      console.log(data)
+    }
+    fetchImages()
+  }, [])
+
+
+
   const handleFilterChange = (filteredResults) => {
     console.log(originals)
     setImages(filteredResults)

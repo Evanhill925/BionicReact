@@ -10,7 +10,7 @@ export default function ImageComp({ images }) {
       <div className="home-grid">
         {images.map((image) => (
           <div className="image" key={image.id}>
-            <img src={image.image_url} id="ImageSlot" alt="Image" />
+            <img src={image.image_url} id="ImageSlot" alt="Image" href={image.image_url} />
           </div>
         ))}
       </div>
