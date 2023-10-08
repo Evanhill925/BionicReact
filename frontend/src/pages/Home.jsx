@@ -5,16 +5,14 @@ import "../App.css"
 import ImageComp from "../ImageComp"
 import { MainImage } from "../MainImage"
 import { Button } from "../Button"
-import  {Prompt}  from "../Prompt"
+import { Prompt } from "../Prompt"
+import Homepage from "../Homepage"
 
 export function Home() {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
   const [singleImage, setSingleImage] = useState([])
   const [testImage, setTestImage] = useState([])
-
-
-
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -36,17 +34,15 @@ export function Home() {
       // Select a random image using the random index
       const randomImage = data[randomIndex]
 
-
       setSingleImage(randomImage)
     }
 
     fetchSingle()
   }, [])
 
-
   useEffect(() => {
     const fetchImages = async () => {
-      console.log('it got this far')
+      console.log("it got this far")
       const res = await fetch("http://localhost:4000/image/1158961810209263626") // this is the number of images that are fetched from the database
       const data = await res.json()
       console.log(data)
@@ -60,20 +56,17 @@ export function Home() {
     fetchImages()
   }, [])
 
-
-
-  Prompt()
-
   if (loading) {
     return <h2>Loading...</h2>
   }
   return (
     <>
-      <Navbar />
+      {/* <Navbar />
       <Form formText={"Enter a prompt!"} />
 
       <MainImage singleImage={singleImage} />
-      <MainImage singleImage={testImage} />
+      <MainImage singleImage={testImage} /> */}
+      <Homepage />
 
       {/* <Button dothis={Prompt}/> */}
       {/* <FormTo/> */}
