@@ -69,6 +69,15 @@ router.get("/home", async (req, res) => {
 
 
 
+router.get("/image/:imageID", async (req, res) => {
+  const entry = schemas.Entry
+  const image_for_display = await entry.findOne({ image_message_id: req.params.imageID }).exec()
+  if (image_for_display) {
+    res.send(JSON.stringify(image_for_display))
+  }
+})
+
+
 
 router.post("/Prompt",async (req,res)=>{
 	// response.render("index.ejs", {image_url:"https://media.discordapp.net/attachments/1103168663617556571/1116864121149849690/lilhelper_fox_man_hunted_webcam_99eba765-c8f8-4270-aee4-0f1dc0519c5e.png?width=559&height=559"})
@@ -79,7 +88,7 @@ router.post("/Prompt",async (req,res)=>{
 	console.log(req.body)
 	let a = req.body.userInput.trim() + req.body.model
 
-  // client.login(process.env.token);
+  client.login(process.env.token);
 
 
   client.on('ready',() => {

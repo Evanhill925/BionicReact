@@ -1,7 +1,7 @@
 import { Navbar } from "../Navbar"
 import { useState, useEffect } from "react"
 import ImageComp from "../ImageComp.jsx"
-import Form from "../Form.jsx"
+import Form from "../SearchForm.jsx"
 import Pagination from "../Pagination.jsx"
 import "../App.css"
 
@@ -22,25 +22,25 @@ export function Gallery() {
   }, [])
 
 
-  useEffect(() => {
-    const fetchImages = async () => {
+  // useEffect(() => {
+  //   const fetchImages = async () => {
 
 
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userInput: 'hat frog ',model:'--quality .25' })
-    };
-      const res = await fetch("http://localhost:4000/Prompt",requestOptions) // this is the number of images that are fetched from the database
-      const data = await res
-      // setImages(data)
-      // setOriginals(data)
-      // setLoading(false)
-      console.log('hat daddy')
-      console.log(data)
-    }
-    fetchImages()
-  }, [])
+  //     const requestOptions = {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ userInput: 'hat frog ',model:'--quality .25' })
+  //   };
+  //     const res = await fetch("http://localhost:4000/Prompt",requestOptions) // this is the number of images that are fetched from the database
+  //     const data = await res
+  //     // setImages(data)
+  //     // setOriginals(data)
+  //     // setLoading(false)
+  //     console.log('hat daddy')
+  //     console.log(data)
+  //   }
+  //   fetchImages()
+  // }, [])
 
 
 
