@@ -42,14 +42,13 @@ export function Home() {
 
   useEffect(() => {
     const fetchImages = async () => {
-      console.log("it got this far")
+      // console.log("it got this far")
       const res = await fetch("http://localhost:4000/image/1158961810209263626") // this is the number of images that are fetched from the database
       const data = await res.json()
-      console.log(data)
-      console.log(data.image_url)
+      // console.log(data)
+      // console.log(data.image_url)
       setTestImage(data)
-      console.log()
-      console.log(singleImage)
+      // console.log(singleImage)
       // console.log()
       // setLoading(false)
     }
@@ -68,7 +67,7 @@ export function Home() {
       <MainImage singleImage={testImage} /> */}
       <Homepage />
 
-      {/* <Button dothis={Prompt}/> */}
+      {/* <Button dothis={Prompt(1,2)}/> */}
       {/* <FormTo/> */}
       <ImageComp images={images} />
     </>
