@@ -1,8 +1,15 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
-function Homepage() {
+function Homepage({ defaultImage }) {
   const [prompt, setPrompt] = useState("")
   const [imageURL, setImageURL] = useState("")
+  const [imageID, setImageID] = useState("")
+
+  useEffect(() => {
+    // Set the initial imageURL state based on the defaultImage prop when the component is mounted
+    setImageURL(defaultImage.image_url)
+    setImageID(defaultImage.image_message_id)
+  }, [defaultImage])
 
   const handlePromptChange = (e) => {
     setPrompt(e.target.value)
@@ -14,14 +21,15 @@ function Homepage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userInput: prompt, // Use the actual prompt entered by the user
+          userInput: prompt,
           model: " --quality .25",
         }),
       }
 
       const res = await fetch("http://localhost:4000/Prompt", requestOptions)
-      const data = await res.json() // Parse the response JSON
-
+      const data = await res.json()
+      setImageObject(data)
+      setImageID(data.image_message_id)
       setImageURL(data.image_url)
     } catch (error) {
       console.error("Error fetching image:", error)
@@ -41,10 +49,9 @@ function Homepage() {
 
       {imageURL && (
         <div>
-          
           <h2>Generated Image</h2>
-          <a href= {imageURL} >
-          <img src={imageURL} alt="Generated Image"  />
+          <a href={imageURL}>
+            <img src={imageURL} alt="Generated Image" />
           </a>
         </div>
       )}
