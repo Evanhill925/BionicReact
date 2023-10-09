@@ -60,12 +60,14 @@ export function Home() {
   }
   return (
     <>
+      <Navbar />
+      {/* <MainImage singleImage={singleImage} /> */}
       {/* <Navbar />
       <Form formText={"Enter a prompt!"} />
 
       <MainImage singleImage={singleImage} />
       <MainImage singleImage={testImage} /> */}
-      <Homepage />
+      <Homepage defaultImage={singleImage} />
 
       {/* <Button dothis={Prompt(1,2)}/> */}
       {/* <FormTo/> */}
@@ -73,6 +75,3 @@ export function Home() {
     </>
   )
 }
-
-
-
