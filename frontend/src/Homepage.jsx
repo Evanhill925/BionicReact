@@ -30,28 +30,24 @@ function Homepage({ defaultImage }) {
 
       const res = await fetch("http://localhost:4000/Prompt", requestOptions)
       const data = await res.json()
-      setImageObject(data)
       setImageID(data.image_message_id)
       setImageURL(data.image_url)
     } catch (error) {
       console.error("Error fetching image:", error)
     }
   }
-  const handlePressButton =  async (row,column,message_id) => {
+  const handlePressButton =  async (row,column) => {
     try {
 
+      console.log(imageID)
 
-      var data = { channel_id:'1103168663617556571',
-                      message_id:'1160755552176050227',
-                      row_:row,
-                      columns_ :column
-                  }
 
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ channel_id:'1103168663617556571',
-        message_id:'1160772773719846954',
+        body: JSON.stringify(
+          { channel_id:'1103168663617556571',
+        message_id:imageID,
         row_:row,
         columns_ :column
     }),
@@ -61,8 +57,9 @@ function Homepage({ defaultImage }) {
 
       const res = await fetch("http://localhost:4000/Button", requestOptions)
       const data = await res.json() // Parse the response JSON
-
+      setImageID(data.image_message_id)
       setImageURL(data.image_url)
+
     } catch (error) {
       console.error("Error fetching image:", error)
     }
@@ -91,9 +88,9 @@ function Homepage({ defaultImage }) {
       <button onClick={() => handlePressButton(0, 3)}>U4</button>
       <button onClick={() => handlePressButton(0, 4)}>↻</button>
       <button onClick={() => handlePressButton(1, 0)}>V1</button>
-      <button onClick={() => handlePressButton(2, 1)}>V2</button>
-      <button onClick={() => handlePressButton(3, 2)}>V3</button>
-      <button onClick={() => handlePressButton(4, 3)}>V4</button>
+      <button onClick={() => handlePressButton(1, 1)}>V2</button>
+      <button onClick={() => handlePressButton(1, 2)}>V3</button>
+      <button onClick={() => handlePressButton(1, 3)}>V4</button>
       
 
 
