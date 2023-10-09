@@ -2,44 +2,8 @@ const express = require("express")
 const router = express.Router()
 const schemas = require("../models/schemas")
 // const discord = require("../models/disclogin")
-
+const {client} = require('../server')
 require("dotenv/config")
-
-
-const {channel} = require('node:diagnostics_channel')
-
-const { Client , Events} = require('discord.js-selfbot-v13');
-
-
-const client = new Client({
-	// See other options here
-	// https://discordjs-self-v13.netlify.app/#/docs/docs/main/typedef/ClientOptions
-	// All partials are loaded automatically
-	checkUpdate: false,
-});
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -84,14 +48,38 @@ router.post("/Prompt",async (req,res)=>{
 	// console.log(adasdasdasd)()
   console.log('503')
   // console.log(discord.channel)
+  if (req.body === 'Dalle 3'){
+    //fetch request to dalle3
+  }
 
 	console.log(req.body)
 	let a = req.body.userInput.trim() + req.body.model
 
-  client.login(process.env.token);
+
+  // client.login(process.env.token);
+  console.log(client.isReady())
+
+  // const { Client , Events} = require('discord.js-selfbot-v13');
 
 
-  client.on('ready',() => {
+  // const client = new Client({
+  //   // See other options here
+  //   // https://discordjs-self-v13.netlify.app/#/docs/docs/main/typedef/ClientOptions
+  //   // All partials are loaded automatically
+  //   checkUpdate: false,
+  // });
+  // if(client.isReady()){
+  //   console.log(`inside fucntion logged in`);
+  //   const channel = client.channels.cache.get('1103168663617556571');
+  //   // console.log(channel)
+  //   console.log(a)
+  //   channel.sendSlash('936929561302675456','imagine', a)
+  //   channel.send(a)
+  // }
+  
+
+
+
     console.log(`${client.user.tag}  logged in`);
     const channel = client.channels.cache.get('1103168663617556571');
     // console.log(channel)
@@ -120,12 +108,7 @@ router.post("/Prompt",async (req,res)=>{
 		Prompt = schemas.Entry(params)
 		Prompt.save()
     res.send(JSON.stringify(params))		})
-
-
-
-
-
-  });
+    ;
 
 	// const channel = client.channels.cache.get('1103168663617556571');
   // console.log(channel)

@@ -15,7 +15,7 @@ function Homepage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userInput: prompt, // Use the actual prompt entered by the user
-          model: "--quality .25",
+          model: " --quality .25",
         }),
       }
 
@@ -41,8 +41,11 @@ function Homepage() {
 
       {imageURL && (
         <div>
+          
           <h2>Generated Image</h2>
-          <img src={imageURL} alt="Generated Image" />
+          <a href= {imageURL} >
+          <img src={imageURL} alt="Generated Image"  />
+          </a>
         </div>
       )}
     </div>

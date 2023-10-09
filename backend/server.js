@@ -1,9 +1,32 @@
 const express = require("express")
 const cors = require("cors")
 const bodyParser = require("body-parser")
-const router = require("./routes/router")
 const mongoose = require("mongoose")
 require("dotenv/config")
+
+
+const {channel} = require('node:diagnostics_channel')
+const { Client , Events} = require('discord.js-selfbot-v13');
+
+const client = new Client({
+	// See other options here
+	// https://discordjs-self-v13.netlify.app/#/docs/docs/main/typedef/ClientOptions
+	// All partials are loaded automatically
+	checkUpdate: false,
+});
+
+client.login(process.env.token);
+client.once('ready', () => {
+  console.log(`${client.user.tag}  logged in`);
+
+});
+
+module.exports.client = client
+
+
+
+const router = require("./routes/router")
+
 
 const app = express()
 
