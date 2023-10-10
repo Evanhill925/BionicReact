@@ -45,12 +45,7 @@ export function Home() {
       // console.log("it got this far")
       const res = await fetch("http://localhost:4000/image/1158961810209263626") // this is the number of images that are fetched from the database
       const data = await res.json()
-      // console.log(data)
-      // console.log(data.image_url)
       setTestImage(data)
-      // console.log(singleImage)
-      // console.log()
-      // setLoading(false)
     }
     fetchImages()
   }, [])

@@ -48,9 +48,49 @@ router.post("/Prompt",async (req,res)=>{
 	// console.log(adasdasdasd)()
   console.log('Prompt route fired')
   // console.log(discord.channel)
-  if (req.body === 'Dalle 3'){
-    //fetch request to dalle3
-  }
+  try{
+
+	if(req.body.model ==='Dalle 3'){
+		console.log('Dalle 3 subroutine')
+
+
+        DallerequestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" ,"Authorization": process.env.DalleKey},
+          body: JSON.stringify({
+            "prompt": req.body.userInput,
+            "n": 2,
+            "size": "1024x1024"
+          })
+        }
+
+
+          const res = await fetch("https://api.openai.com/v1/images/generations", DallerequestOptions)
+          const data = await res.json()
+          url = data.data[0].url
+		// NEED TO UPDATE THESE VALUES WHEN API RELEASES
+		//specifically image_message_id & time
+		//possibly also type
+		  var params = { username: "someuser",
+		  image_url:data.data[0].url,
+		   image_message_id: null,
+			prompt:req.body.userInput,
+		 type: null,
+		//  alternate type name'Dalle 3',
+		 time:null,
+	 }
+
+		console.log(params)
+
+		Prompt = schemas.Entry(params)
+		Prompt.save()
+		res.send(JSON.stringify(params))
+
+      }
+	  else {
+		console.log('Midjourney subroutine')
+
+  
 
 	console.log(req.body)
 	let a = req.body.userInput.trim() +req.body.quality + req.body.model 
@@ -84,7 +124,10 @@ router.post("/Prompt",async (req,res)=>{
 		Prompt.save()
     res.send(JSON.stringify(params))		})
     ;
-
+				}
+			} catch (error) {
+				console.error("Error in discordbot image:", error)
+			  }
 
 })
 

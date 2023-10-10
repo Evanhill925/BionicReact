@@ -33,21 +33,23 @@ function Homepage({ defaultImage }) {
           model: `${
             selectedOption ? selectedOption : " --v 5.2"
           }`,
-          quality : '--quality .25 '
+          quality : ' --quality .25'
         }),
       }
 
-      if(requestOptions.model ==='Dalle 3'){
+      
+      
         
-      }
-      {
+      
+      
       const res = await fetch("http://localhost:4000/Prompt", requestOptions)
       const data = await res.json()
       setImageID(data.image_message_id)
       setImageURL(data.image_url)
       setImagePrompt(data.prompt)
+      setImageType(data.type)
 
-      }
+      
 
 
 
@@ -79,6 +81,8 @@ function Homepage({ defaultImage }) {
       setImageID(data.image_message_id)
       setImageURL(data.image_url)
       setImagePrompt(data.prompt)
+      setImageType(data.type)
+
     } catch (error) {
       console.error("Error fetching image:", error)
     }
@@ -105,6 +109,7 @@ function Homepage({ defaultImage }) {
             <img src={imageURL} alt="Generated Image" />
           </a>
           
+          {ImageType===null ? "": (<div>
           <button title='Upscale top left image' onClick={() => handlePressButton(0, 0)}>U1</button>
           <button title='Upscale top right image'onClick={() => handlePressButton(0, 1)}>U2</button>
           <button title='Upscale bottom left image'onClick={() => handlePressButton(0, 2)}>U3</button>
@@ -114,7 +119,11 @@ function Homepage({ defaultImage }) {
           <button onClick={() => handlePressButton(1, 1)}>V2</button>
           <button onClick={() => handlePressButton(1, 2)}>V3</button>
           <button onClick={() => handlePressButton(1, 3)}>V4</button>
-        </div>
+          </div>
+
+          )}
+          </div>
+        
       )}
     </div>
   )
