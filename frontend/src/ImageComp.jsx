@@ -15,7 +15,7 @@ export default function ImageComp({ images }) {
                 src={image.image_url}
                 id="ImageSlot"
                 alt="Image"
-                href={image.image_url}
+                title={image.prompt}
               />
             </a>
           </div>

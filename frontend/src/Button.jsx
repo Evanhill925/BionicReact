@@ -1,6 +1,6 @@
 import React from "react"
 
-export function Button(dothis) {
+export function Button({dothis}) {
 
   // test_value = 'hat dog'
 

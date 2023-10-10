@@ -23,8 +23,6 @@ client.once('ready', () => {
 
 module.exports.client = client
 
-
-
 const router = require("./routes/router")
 
 

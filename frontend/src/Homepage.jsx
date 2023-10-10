@@ -6,6 +6,7 @@ function Homepage({ defaultImage }) {
   const [imageURL, setImageURL] = useState("")
   const [imageID, setImageID] = useState("")
   const [ImagePrompt, setImagePrompt] = useState()
+  const [ImageType, setImageType] = useState()
   const [selectedOption, setSelectedOption] = useState("")
 
   useEffect(() => {
@@ -29,22 +30,35 @@ function Homepage({ defaultImage }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userInput: prompt,
-          model: ` --quality .25 ${
-            selectedOption ? selectedOption : "--v 5.2"
+          model: `${
+            selectedOption ? selectedOption : " --v 5.2"
           }`,
+          quality : '--quality .25 '
         }),
       }
 
+      if(requestOptions.model ==='Dalle 3'){
+        
+      }
+      {
       const res = await fetch("http://localhost:4000/Prompt", requestOptions)
       const data = await res.json()
       setImageID(data.image_message_id)
       setImageURL(data.image_url)
       setImagePrompt(data.prompt)
+
+      }
+
+
+
+      
     } catch (error) {
       console.error("Error fetching image:", error)
     }
+    // clears input after submit button pressed
     setPrompt("")
   }
+
   const handlePressButton = async (row, column) => {
     try {
       console.log(imageID)
@@ -90,10 +104,11 @@ function Homepage({ defaultImage }) {
           <a href={imageURL}>
             <img src={imageURL} alt="Generated Image" />
           </a>
-          <button onClick={() => handlePressButton(0, 0)}>U1</button>
-          <button onClick={() => handlePressButton(0, 1)}>U2</button>
-          <button onClick={() => handlePressButton(0, 2)}>U3</button>
-          <button onClick={() => handlePressButton(0, 3)}>U4</button>
+          
+          <button title='Upscale top left image' onClick={() => handlePressButton(0, 0)}>U1</button>
+          <button title='Upscale top right image'onClick={() => handlePressButton(0, 1)}>U2</button>
+          <button title='Upscale bottom left image'onClick={() => handlePressButton(0, 2)}>U3</button>
+          <button title='Upscale bottom right image' onClick={() => handlePressButton(0, 3)}>U4</button>
           <button onClick={() => handlePressButton(0, 4)}>↻</button>
           <button onClick={() => handlePressButton(1, 0)}>V1</button>
           <button onClick={() => handlePressButton(1, 1)}>V2</button>

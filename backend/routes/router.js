@@ -53,7 +53,7 @@ router.post("/Prompt",async (req,res)=>{
   }
 
 	console.log(req.body)
-	let a = req.body.userInput.trim() + req.body.model
+	let a = req.body.userInput.trim() +req.body.quality + req.body.model 
 
 
 
