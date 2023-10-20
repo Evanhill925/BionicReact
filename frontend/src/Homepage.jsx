@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import DropdownMenu from "./Dropdown"
-import loadingPic from "./dogload.png"
+import loadingPic from "./loader.svg"
 
 function Homepage({ defaultImage }) {
   const [prompt, setPrompt] = useState("")
