@@ -34,20 +34,32 @@
   grid-gap: 2px;
 }
 
-#main-image {
-  text-align: center; /* Center the contents horizontally */
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-  max-width: 600px;
-  max-height: 600px;
-  padding-bottom: 20px;
+.primary-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#large-image {
-  min-height: 500px;
-  min-width: 500px;
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  max-height: 600px;
+.primary-image {
+  height: 800px;
+  width: 800px;
+}
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdown-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.prompt-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  /* Styles for screens with a maximum width of 768px */
 }

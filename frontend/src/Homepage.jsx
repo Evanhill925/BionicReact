@@ -83,25 +83,35 @@ function Homepage({ defaultImage }) {
 
   return (
     <div>
-      <h1>Enter a prompt to create an image!</h1>
-      <input
-        type="text"
-        placeholder="Enter a prompt"
-        value={prompt}
-        onChange={handlePromptChange}
-      />
-      <button onClick={handleFetchImage}>Submit</button>
+      <div className="search-container">
+        <h1>Enter a prompt to create an image!</h1>
+        <input
+          type="text"
+          placeholder="Enter a prompt"
+          value={prompt}
+          onChange={handlePromptChange}
+        />
+        <button onClick={handleFetchImage}>Submit</button>
+      </div>
       <DropdownMenu onOptionSelect={handleOptionSelect} />
-
       {loading ? (
         <img src={loadingPic} alt="Loading" /> // Display the loading image
       ) : (
         imageURL && (
           <div>
-            <h2>{ImagePrompt ? ImagePrompt : defaultImage.prompt}</h2>
-            <a href={imageURL}>
-              <img src={imageURL} alt="Generated Image" />
-            </a>
+            <h2 className="prompt-title">
+              {ImagePrompt ? ImagePrompt : defaultImage.prompt}
+            </h2>
+
+            <div className="primary-image-container">
+              <a href={imageURL}>
+                <img
+                  src={imageURL}
+                  alt="Generated Image"
+                  className="primary-image"
+                />
+              </a>
+            </div>
 
             {ImageType === null ? (
               ""
