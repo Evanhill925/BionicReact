@@ -8,8 +8,12 @@ function DropdownMenu({ onOptionSelect }) {
   }
 
   return (
-    <div>
-      <h1>Dropdown Menu Example</h1>
+    <div className="dropdown-container">
+      <h3>
+        Choose an exciting extras that'll add a sprinkle of fun to your
+        experience!
+      </h3>
+
       <select onChange={handleOptionChange}>
         <option value="">Midjourney (recommended)</option>
         <option value=" --niji 5">niji </option>
@@ -17,7 +21,6 @@ function DropdownMenu({ onOptionSelect }) {
         <option value=" --niji 5 --style scenic">niji scenic</option>
         <option value=" --niji 5 --style expressive">niji expressive</option>
         {/* <option value="Dalle 3">Dalle 3</option> */}
-
       </select>
     </div>
   )
