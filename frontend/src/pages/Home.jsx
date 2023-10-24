@@ -1,19 +1,18 @@
 import { Navbar } from "../Navbar"
 import { useState, useEffect } from "react"
-import Form from "../SearchForm.jsx"
+
 import "../App.css"
 import ImageComp from "../ImageComp"
-import { MainImage } from "../MainImage"
-import { Button } from "../Button"
-import { Prompt } from "../Prompt"
+
 import Homepage from "../Homepage"
 
 export function Home() {
+  // const [urlState, setUrlState] = useState()
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
   const [singleImage, setSingleImage] = useState([])
-  const [testImage, setTestImage] = useState([])
 
+  // pulls the last 6 images from DB that we are displaying in ImageComp
   useEffect(() => {
     const fetchImages = async () => {
       const res = await fetch("http://localhost:4000/userImages/6") // this is the number of images that are fetched from the database
@@ -24,30 +23,45 @@ export function Home() {
     fetchImages()
   }, [])
 
+  // sets URL and makes sure main image matches, loads random image if no image is currently set
   useEffect(() => {
-    const fetchSingle = async () => {
-      const res = await fetch("http://localhost:4000/userImages/50")
-      const data = await res.json()
-
-      // Generate a random index within the range of 0 to 49
-      const randomIndex = Math.floor(Math.random() * 50)
-      // Select a random image using the random index
-      const randomImage = data[randomIndex]
-
-      setSingleImage(randomImage)
+    // Function to parse query parameters from the URL
+    const getQueryParameters = () => {
+      const queryString = window.location.search
+      const urlParams = new URLSearchParams(queryString)
+      return urlParams
     }
 
-    fetchSingle()
-  }, [])
+    // Get the image_message_id from the URL
+    const urlParams = getQueryParameters()
+    const imageMessageId = urlParams.get("image")
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      // console.log("it got this far")
-      const res = await fetch("http://localhost:4000/image/1158961810209263626") // this is the number of images that are fetched from the database
-      const data = await res.json()
-      setTestImage(data)
+    if (imageMessageId) {
+      // If image_message_id exists in the URL, fetch and set it
+      const fetchImage = async () => {
+        const res = await fetch(`http://localhost:4000/image/${imageMessageId}`)
+        const data = await res.json()
+        setSingleImage(data)
+      }
+      fetchImage()
+    } else {
+      // If image_message_id doesn't exist in the URL, fetch a random image
+      const fetchRandomImage = async () => {
+        const res = await fetch("http://localhost:4000/userImages/50")
+        const data = await res.json()
+        const randomIndex = Math.floor(Math.random() * 50)
+        const randomImage = data[randomIndex]
+        setSingleImage(randomImage)
+
+        // Update the URL after setting the random image
+        window.history.pushState(
+          null,
+          "",
+          `?image=${randomImage.image_message_id}`
+        )
+      }
+      fetchRandomImage()
     }
-    fetchImages()
   }, [])
 
   if (loading) {
@@ -55,17 +69,10 @@ export function Home() {
   }
   return (
     <>
-      <Navbar />
-      {/* <MainImage singleImage={singleImage} /> */}
-      {/* <Navbar />
-      <Form formText={"Enter a prompt!"} />
+      <Navbar state={singleImage} />
 
-      <MainImage singleImage={singleImage} />
-      <MainImage singleImage={testImage} /> */}
       <Homepage defaultImage={singleImage} />
 
-      {/* <Button dothis={Prompt(1,2)}/> */}
-      {/* <FormTo/> */}
       <ImageComp images={images} />
     </>
   )
