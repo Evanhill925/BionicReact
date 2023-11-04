@@ -45,6 +45,7 @@ function Homepage({ defaultImage }) {
       setImageURL(data.image_url)
       setImagePrompt(data.prompt)
       setImageType(data.type)
+      window.history.pushState(null, "", `?image=${data.image_message_id}`)
     } catch (error) {
       console.error("Error fetching image:", error)
     }
@@ -84,14 +85,16 @@ function Homepage({ defaultImage }) {
   return (
     <div>
       <div className="search-container">
-        <h1>Enter a prompt to create an image!</h1>
+        <h1>Enter a prompt to create an image!&nbsp;</h1>
         <input
           type="text"
           placeholder="Enter a prompt"
           value={prompt}
           onChange={handlePromptChange}
         />
-        <button onClick={handleFetchImage}>Submit</button>
+        <button className="sub-button" onClick={handleFetchImage}>
+          Submit
+        </button>
       </div>
       <DropdownMenu onOptionSelect={handleOptionSelect} />
       {loading ? (
@@ -116,7 +119,7 @@ function Homepage({ defaultImage }) {
             {ImageType === null ? (
               ""
             ) : (
-              <div>
+              <div className="buttons">
                 <button
                   title="Upscale top left image"
                   onClick={() => handlePressButton(0, 0)}

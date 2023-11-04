@@ -24,16 +24,6 @@
   margin-right: 0; /* Remove margin from the last item */
 }
 
-.home-grid {
-  display: grid;
-  grid-template-rows: auto; /* Set rows to 'auto' to allow content to determine the height */
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(100px, 1fr)
-  ); /* Create a row of items */
-  grid-gap: 2px;
-}
-
 .primary-image-container {
   display: flex;
   align-items: center;
@@ -50,6 +40,7 @@
 }
 
 .dropdown-container {
+  margin-top: -35px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,4 +53,49 @@
 
 @media (max-width: 768px) {
   /* Styles for screens with a maximum width of 768px */
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  width: 80px;
+  height: 80px;
+  background-color: #66b2ff;
+  color: #333333;
+  border-color: #66b2ff;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+.sub-button {
+  background-color: #66b2ff;
+  color: #333333;
+  border-color: #66b2ff;
+  border-radius: 5px;
+  height: 20px;
+  width: 80px;
+}
+
+.home-grid {
+  max-width: 1500px;
+  margin: 0 auto; /* Center horizontally */
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  justify-content: center; /* Center grid items horizontally */
+  align-items: center; /* Center grid items vertically */
+  grid-gap: 5px;
+}
+
+.grid-item {
+  box-sizing: border-box;
+  min-height: 200px;
+  min-width: 200px;
+
+  padding: 10px;
+  text-align: center;
+  overflow: hidden; /* Hide overflowing content */
 }

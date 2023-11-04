@@ -10,8 +10,8 @@ function DropdownMenu({ onOptionSelect }) {
   return (
     <div className="dropdown-container">
       <h3>
-        Choose an exciting extras that'll add a sprinkle of fun to your
-        experience!
+        Here are some exciting extras that'll add a sprinkle of fun to your
+        experience!&nbsp;
       </h3>
 
       <select onChange={handleOptionChange}>
