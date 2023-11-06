@@ -5,6 +5,12 @@ const schemas = require("../models/schemas")
 const { client } = require("../server")
 require("dotenv/config")
 
+
+
+const { Configuration, OpenAI } = require("openai");
+
+const openai = new OpenAI();
+
 router.get("/", (req, res) => {})
 
 router.get("/userImages/:num", async (req, res) => {
@@ -45,36 +51,62 @@ router.post("/Prompt", async (req, res) => {
     if (req.body.model === "Dalle 3") {
       console.log("Dalle 3 subroutine")
 
-      DallerequestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: process.env.DalleKey,
-        },
-        body: JSON.stringify({
-          prompt: req.body.userInput,
-          n: 2,
-          size: "1024x1024",
-        }),
-      }
+      // DallerequestOptions = {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: process.env.DalleKey,
+      //   },
+      //   body: JSON.stringify({
+      //     prompt: req.body.userInput,
+      //     model: "dall-e-3",
+      //     n: 1,
+      //     size: "1024x1024",
+      //   }),
+      // }
 
-      const res = await fetch(
-        "https://api.openai.com/v1/images/generations",
-        DallerequestOptions
-      )
-      const data = await res.json()
-      url = data.data[0].url
+      // const res = await fetch(
+      //   "https://api.openai.com/v1/images/generations",
+      //   DallerequestOptions
+      // )
+      // const data = await res.json()
+      // url = data.data[0].url
+      // console.log()
+
+      // const response = await openai.images.generate({
+      //   model: "dall-e-3",
+      //   prompt: "a white siamese cat",
+      //   n: 1,
+      //   size: "1024x1024",
+      // });
+      // image_url = response.data.data[0].url;
+      // console.log(image_url)
+      // url = image_url
+
+      const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: req.body.userInput,
+        n: 1,
+        size: "1024x1024",
+      });
+      console.log(response)
+      url = response.data[0].url;
+      console.log(url)
+      
+
+
+
       // NEED TO UPDATE THESE VALUES WHEN API RELEASES
       //specifically image_message_id & time
       //possibly also type
       var params = {
         username: "someuser",
-        image_url: data.data[0].url,
-        image_message_id: null,
-        prompt: req.body.userInput,
-        type: null,
+        image_url: url,
+        image_message_id: response.created,
+        prompt: req.body.userInput+" Dall-e 3",
+        type: "Upscale",
         //  alternate type name'Dalle 3',
-        time: null,
+        time: response.created,
       }
 
       console.log(params)

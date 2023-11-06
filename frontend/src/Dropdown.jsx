@@ -20,7 +20,7 @@ function DropdownMenu({ onOptionSelect }) {
         <option value=" --niji 5 --style cute">niji cute</option>
         <option value=" --niji 5 --style scenic">niji scenic</option>
         <option value=" --niji 5 --style expressive">niji expressive</option>
-        {/* <option value="Dalle 3">Dalle 3</option> */}
+        <option value="Dalle 3">Dalle 3</option> 
       </select>
     </div>
   )
