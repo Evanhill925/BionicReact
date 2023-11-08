@@ -4,6 +4,7 @@ const schemas = require("../models/schemas")
 // const discord = require("../models/disclogin")
 const { client } = require("../server")
 require("dotenv/config")
+const download = require('image-downloader');
 
 
 
@@ -51,58 +52,38 @@ router.post("/Prompt", async (req, res) => {
     if (req.body.model === "Dalle 3") {
       console.log("Dalle 3 subroutine")
 
-      // DallerequestOptions = {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: process.env.DalleKey,
-      //   },
-      //   body: JSON.stringify({
-      //     prompt: req.body.userInput,
-      //     model: "dall-e-3",
-      //     n: 1,
-      //     size: "1024x1024",
-      //   }),
-      // }
-
-      // const res = await fetch(
-      //   "https://api.openai.com/v1/images/generations",
-      //   DallerequestOptions
-      // )
-      // const data = await res.json()
-      // url = data.data[0].url
-      // console.log()
-
-      // const response = await openai.images.generate({
-      //   model: "dall-e-3",
-      //   prompt: "a white siamese cat",
-      //   n: 1,
-      //   size: "1024x1024",
-      // });
-      // image_url = response.data.data[0].url;
-      // console.log(image_url)
-      // url = image_url
 
       const response = await openai.images.generate({
         model: "dall-e-3",
         prompt: req.body.userInput,
         n: 1,
         size: "1024x1024",
+        response_format: "b64_json"
       });
       console.log(response)
-      url = response.data[0].url;
-      console.log(url)
-      
+      url = response.data[0].b64_json;
+
+      var imageStream = Buffer.from(url, "base64");
+
+      const channel = client.channels.cache.get("1103168663617556571")
+
+
+      disc_upload_message = await channel.send({
+        content: req.body.userInput,
+        files: [{
+          attachment: imageStream,
+          name: 'file.png'
+        }]
+      })
 
 
 
-      // NEED TO UPDATE THESE VALUES WHEN API RELEASES
-      //specifically image_message_id & time
-      //possibly also type
+
+
       var params = {
         username: "someuser",
-        image_url: url,
-        image_message_id: response.created,
+        image_url: disc_upload_message.attachments.first().url,
+        image_message_id: disc_upload_message.id,
         prompt: req.body.userInput+" Dall-e 3",
         type: "Upscale",
         //  alternate type name'Dalle 3',
