@@ -6,6 +6,8 @@ import ImageComp from "../ImageComp"
 
 import Homepage from "../Homepage"
 
+import HelmetComponent from "../HeaderComponent"
+
 export function Home() {
   // const [urlState, setUrlState] = useState()
   const [images, setImages] = useState([])
@@ -63,7 +65,6 @@ export function Home() {
       fetchRandomImage()
     }
   }, [])
-
   if (loading) {
     return <h2>Loading...</h2>
   }
@@ -74,6 +75,7 @@ export function Home() {
       <Homepage defaultImage={singleImage} />
 
       <ImageComp images={images} />
+      <HelmetComponent imageDict={singleImage} />
     </>
   )
 }

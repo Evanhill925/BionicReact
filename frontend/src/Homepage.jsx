@@ -15,6 +15,9 @@ function Homepage({ defaultImage }) {
     // Set the initial imageURL state based on the defaultImage prop when the component is mounted
     setImageURL(defaultImage.image_url)
     setImageID(defaultImage.image_message_id)
+    // setImagePrompt(defaultImage.prompt)
+    setImageType(defaultImage.type)
+    // console.log(defaultImage)
   }, [defaultImage])
 
   const handlePromptChange = (e) => {
@@ -55,8 +58,9 @@ function Homepage({ defaultImage }) {
   }
 
   const handlePressButton = async (row, column) => {
+    setLoading(true)
     try {
-      console.log(imageID)
+      // console.log(imageID)
 
       const requestOptions = {
         method: "POST",
@@ -74,12 +78,12 @@ function Homepage({ defaultImage }) {
       const data = await res.json() // Parse the response JSON
       setImageID(data.image_message_id)
       setImageURL(data.image_url)
-      console.log(data, "This is the prompt test")
       // setImagePrompt(data.prompt)
       setImageType(data.type)
     } catch (error) {
       console.error("Error fetching image:", error)
     }
+    setLoading(false)
   }
 
   return (
@@ -116,7 +120,8 @@ function Homepage({ defaultImage }) {
               </a>
             </div>
 
-            {ImageType === null ? (
+            {[null,'Upscale'].includes(ImageType) ? (
+              
               ""
             ) : (
               <div className="buttons">

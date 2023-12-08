@@ -151,12 +151,12 @@ router.post("/Button", async (request, res) => {
   const message = await channel.messages.fetch(request.body.message_id)
 
   function determine_type(row, column) {
-    if (column === "4") {
+    if (column === 4) {
       return "Reimagine"
     }
-    if (row === "0") {
+    if (row === 0) {
       return "Upscale"
-    } else if (row === "1") {
+    } else if (row === 1) {
       return "Variation"
     } else {
       return null
