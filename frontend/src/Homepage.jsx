@@ -102,7 +102,9 @@ function Homepage({ defaultImage }) {
       </div>
       <DropdownMenu onOptionSelect={handleOptionSelect} />
       {loading ? (
-        <img src={loadingPic} alt="Loading" /> // Display the loading image
+        <div className="loader">
+        <img src={loadingPic} alt="Loading" className="loading-placeholder" /> 
+        </div>
       ) : (
         imageURL && (
           <div>

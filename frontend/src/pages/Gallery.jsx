@@ -17,6 +17,7 @@ export function Gallery() {
       setImages(data)
       setOriginals(data)
       setLoading(false)
+      console.log("billy said you have this many images",data.length)
     }
     fetchImages()
   }, [])

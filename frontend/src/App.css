@@ -1,3 +1,18 @@
+body{
+  background-color: #E6F2FF;
+}
+
+/* .loading-placeholder {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+} */
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #ImageSlot {
   max-width: 200px;
   max-height: 200px;
@@ -98,4 +113,29 @@ button {
   padding: 10px;
   text-align: center;
   overflow: hidden; /* Hide overflowing content */
+}
+
+
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination li {
+  margin-right: 5px; /* Adjust as needed for spacing between items */
+}
+
+.page-link {
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+  cursor: pointer;
+  background-color: #66b2ff; /* Set the background color */
+}
+
+.page-link:hover {
+  background-color: #336699; /* Adjust the hover background color if needed */
 }

@@ -20,14 +20,12 @@ function Pagination({ imagesPerPage, totalImages, paginate }) {
           {pageNumbers.map((number) => (
             <li key={number} className="page-item">
               <a
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault();
                   handlePageClick(number)
                   paginate(number)
                 }}
-                href="!#"
-                className="page-link"
-              >
-                {number}
+                href="!#"className="page-link">{number}
               </a>
             </li>
           ))}
