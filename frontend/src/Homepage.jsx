@@ -31,6 +31,7 @@ function Homepage({ defaultImage }) {
   }
 
   const handleFetchImage = async () => {
+    if (!loading) {
     setLoading(true)
     try {
       const requestOptions = {
@@ -39,7 +40,7 @@ function Homepage({ defaultImage }) {
         body: JSON.stringify({
           userInput: prompt,
           model: `${selectedOption ? selectedOption : " --v 5.2"}`,
-          quality: " --quality .25",
+          // quality: " --quality .25",
         }),
       }
 
@@ -58,9 +59,10 @@ function Homepage({ defaultImage }) {
     setPrompt("")
     setLoading(false)
   }
-
+  }
   const handlePressButton = async (row, column) => {
-    setLoading(true)
+    if (!loading) {
+      setLoading(true);
     try {
       // console.log(imageID)
 
@@ -86,6 +88,7 @@ function Homepage({ defaultImage }) {
       console.error("Error fetching image:", error)
     }
     setLoading(false)
+  }
   }
 
   return (
