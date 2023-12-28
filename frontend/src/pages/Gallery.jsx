@@ -9,10 +9,11 @@ export function Gallery() {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
   const [originals, setOriginals] = useState([])
+  const uriPath= import.meta.env.VITE_uriPath;
 
   useEffect(() => {
     const fetchImages = async () => {
-      const res = await fetch("http://localhost:4000/userImages/300") // this is the number of images that are fetched from the database
+      const res = await fetch(`${uriPath}/userImages/300`) // this is the number of images that are fetched from the database
       const data = await res.json()
       setImages(data)
       setOriginals(data)
@@ -45,6 +46,7 @@ export function Gallery() {
   } else if (images.length === 0) {
     return (
       <>
+        <Navbar />
         <Form originals={originals} onFilterChange={handleFilterChange} />
         <h2>No images found.</h2>
       </>

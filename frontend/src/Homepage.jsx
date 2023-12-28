@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import DropdownMenu from "./Dropdown"
 import loadingPic from "./loader.svg"
 
+
 function Homepage({ defaultImage }) {
   const [prompt, setPrompt] = useState("")
   const [imageURL, setImageURL] = useState("")
@@ -10,6 +11,7 @@ function Homepage({ defaultImage }) {
   const [ImageType, setImageType] = useState()
   const [selectedOption, setSelectedOption] = useState("")
   const [loading, setLoading] = useState()
+  const uriPath= import.meta.env.VITE_uriPath;
 
   useEffect(() => {
     // Set the initial imageURL state based on the defaultImage prop when the component is mounted
@@ -41,7 +43,7 @@ function Homepage({ defaultImage }) {
         }),
       }
 
-      const res = await fetch("http://localhost:4000/Prompt", requestOptions)
+      const res = await fetch(`${uriPath}/Prompt`, requestOptions)
       const data = await res.json()
 
       setImageID(data.image_message_id)
@@ -74,7 +76,7 @@ function Homepage({ defaultImage }) {
         }),
       }
 
-      const res = await fetch("http://localhost:4000/Button", requestOptions)
+      const res = await fetch(`${uriPath}/Button`, requestOptions)
       const data = await res.json() // Parse the response JSON
       setImageID(data.image_message_id)
       setImageURL(data.image_url)

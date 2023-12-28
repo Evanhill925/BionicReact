@@ -8,16 +8,20 @@ import Homepage from "../Homepage"
 
 import HelmetComponent from "../HeaderComponent"
 
+const uriPath= import.meta.env.VITE_uriPath;
+console.log(uriPath)
+
 export function Home() {
   // const [urlState, setUrlState] = useState()
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
   const [singleImage, setSingleImage] = useState([])
-
+ 
+  
   // pulls the last 6 images from DB that we are displaying in ImageComp
   useEffect(() => {
     const fetchImages = async () => {
-      const res = await fetch("http://localhost:4000/userImages/6") // this is the number of images that are fetched from the database
+      const res = await fetch(`${uriPath}/userImages/6`) // this is the number of images that are fetched from the database
       const data = await res.json()
       setImages(data)
       setLoading(false)
@@ -41,7 +45,7 @@ export function Home() {
     if (imageMessageId) {
       // If image_message_id exists in the URL, fetch and set it
       const fetchImage = async () => {
-        const res = await fetch(`http://localhost:4000/image/${imageMessageId}`)
+        const res = await fetch(`${uriPath}/image/${imageMessageId}`)
         const data = await res.json()
         setSingleImage(data)
       }
@@ -49,7 +53,7 @@ export function Home() {
     } else {
       // If image_message_id doesn't exist in the URL, fetch a random image
       const fetchRandomImage = async () => {
-        const res = await fetch("http://localhost:4000/userImages/50")
+        const res = await fetch(`${uriPath}/userImages/50`)
         const data = await res.json()
         const randomIndex = Math.floor(Math.random() * 50)
         const randomImage = data[randomIndex]
