@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 
-export default function HelmetComponent({imageDict}){
+function HelmetComponent({ imageDict }) {
     const [url, setUrl] = useState('');
     const [desc, setDesc] = useState('');
 
     useEffect(() => {
-        if (imageDict && imageDict.imageDict) {
-            setUrl(imageDict.imageDict.image_url);
-            setDesc(imageDict.imageDict.prompt);
+        console.log('Component mounted or imageDict changed');
+        console.log(imageDict);
+
+        // Check if imageDict is not null and not an empty object
+        if (imageDict && Object.keys(imageDict).length !== 0) {
+            console.log('Updating state with new imageDict values');
+
+            setUrl(imageDict.image_url || '');
+            setDesc(imageDict.prompt || '');
         }
-    }, [imageDict]);
+    }, [imageDict]); // Include imageDict as a dependency so it updates when imageDict changes
 
     return (
         <>
@@ -34,3 +40,5 @@ export default function HelmetComponent({imageDict}){
         </>
     );
 };
+
+export default HelmetComponent;

@@ -79,7 +79,7 @@ export function Home() {
       <Homepage defaultImage={singleImage} />
 
       <ImageComp images={images} />
-      {/* <HelmetComponent imageDict={singleImage} /> */}
+      <HelmetComponent imageDict={singleImage} />
     </>
   )
 }
