@@ -99,7 +99,7 @@ router.post("/Prompt", async (req, res) => {
       console.log("Midjourney subroutine")
 
       console.log(req.body)
-      let a = req.body.userInput.trim() + req.body.quality + req.body.model
+      let a = req.body.userInput.trim() + req.body.model
 
       const channel = client.channels.cache.get("1103168663617556571")
       // console.log(channel)

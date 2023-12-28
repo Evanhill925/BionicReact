@@ -39,7 +39,7 @@ function Homepage({ defaultImage }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userInput: prompt,
-          model: `${selectedOption ? selectedOption : " --v 5.2"}`,
+          model: `${selectedOption ? selectedOption : " --v 5.2"}`
           // quality: " --quality .25",
         }),
       }
