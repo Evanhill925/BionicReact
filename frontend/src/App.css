@@ -2,11 +2,7 @@ body{
   background-color: #E6F2FF;
 }
 
-/* .loading-placeholder {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-} */
+
 .loader {
   display: flex;
   align-items: center;
@@ -64,10 +60,6 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-@media (max-width: 768px) {
-  /* Styles for screens with a maximum width of 768px */
 }
 
 .buttons {
@@ -138,4 +130,102 @@ button {
 
 .page-link:hover {
   background-color: #336699; /* Adjust the hover background color if needed */
+}
+
+@media (max-width: 768px) {
+  /* Styles for screens with a maximum width of 768px */
+  h1, h3 {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 80%; /* Adjust the value as needed */
+    padding: 0 10px; /* Adjust the value as needed */
+  }
+  h3{
+    font-size: small;
+  }
+  
+  .search-container {
+    flex-direction: column;
+    
+  }
+  .dropdown-container {
+    flex-direction: column;
+    margin-top: 0;
+  }
+  .prompt-title {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
+  }
+  .primary-image-container {
+    margin-top: 10px;
+    height: 350px;
+    width: 350px;
+   
+  }
+  .primary-image {
+    height: 350px;
+    width: 350px;
+    margin-left: 5px;
+    margin-left: 5px;
+  }
+  .buttons {
+    flex-direction: row;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .buttons button {
+    margin: 2px;
+    width: 50%;
+    height: 80%;
+  }
+  .home-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: center;
+}
+
+.grid-item {
+    min-width: 200px;
+    min-height: auto;
+    margin: 0 5px;
+}
+
+/* Style the scrollbar */
+.home-grid::-webkit-scrollbar {
+    width: 12px; /* Set the width of the scrollbar */
+}
+
+.home-grid::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color of the scrollbar thumb */
+    border-radius: 6px; /* Rounded corners for the thumb */
+}
+
+.home-grid::-webkit-scrollbar-track {
+    background-color: #f0f0f0; /* Color of the scrollbar track */
+}
+
+.home-grid::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Color of the scrollbar thumb on hover */
+}
+
+
+  .pagination {
+    text-align: center;
+    margin: 0;
+    max-width: 100%;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* Allow flex items to wrap to the next row */
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+.pagination button {
+    flex: 1 0 30%; /* Adjust the values as needed */
+    margin: 5px; /* Adjust the margin between buttons */
+    
+}
 }

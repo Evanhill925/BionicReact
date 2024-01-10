@@ -60,13 +60,14 @@ export function Gallery() {
         onFilterChange={handleFilterChange}
         formText={"Search the Gallery!"}
       />
-
+      <div className="gallery-mobile-section">
       <ImageComp images={currentImages} />
       <Pagination
         imagesPerPage={imagesPerPage}
         totalImages={images.length}
         paginate={paginate}
       />
+      </div>
     </>
   )
 }
