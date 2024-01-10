@@ -11,6 +11,9 @@ Currently, two official plugins are available:
 front end
 npm run dev
 
+npm run build
+sudo systemctl reload nginx
+
 Message @agent coder banks
 
 
