@@ -61,7 +61,7 @@ export function Gallery() {
         formText={"Search the Gallery!"}
       />
       <div className="gallery-mobile-section">
-      <ImageComp images={currentImages} />
+      <ImageComp images={currentImages} grid_class={"gallery-grid"}  />
       <Pagination
         imagesPerPage={imagesPerPage}
         totalImages={images.length}

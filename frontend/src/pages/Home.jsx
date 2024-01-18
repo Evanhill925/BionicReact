@@ -78,7 +78,7 @@ export function Home() {
 
       <Homepage defaultImage={singleImage} />
 
-      <ImageComp images={images} />
+      <ImageComp images={images} grid_class={"home-grid"} />
       <HelmetComponent imageDict={singleImage} />
     </>
   )

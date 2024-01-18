@@ -4,7 +4,7 @@ const schemas = require("../models/schemas")
 // const discord = require("../models/disclogin")
 const { client } = require("../server")
 require("dotenv/config")
-const download = require('image-downloader');
+
 
 
 

@@ -118,7 +118,7 @@ function Homepage({ defaultImage }) {
             </h2>
 
             <div className="primary-image-container">
-              <a href={imageURL}>
+              <a target="_blank" href={imageURL}>
                 <img
                   src={imageURL}
                   alt="Generated Image"
