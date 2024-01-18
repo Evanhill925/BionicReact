@@ -30,7 +30,8 @@ function Homepage({ defaultImage }) {
     setSelectedOption(option)
   }
 
-  const handleFetchImage = async () => {
+  const handleFetchImage = async (event) => {
+    event.preventDefault()
     if (!loading) {
     setLoading(true)
     try {
@@ -93,18 +94,18 @@ function Homepage({ defaultImage }) {
 
   return (
     <div>
-      <div className="search-container">
-        <h1>Enter a prompt to create an image!&nbsp;</h1>
-        <input
-          type="text"
-          placeholder="Enter a prompt"
-          value={prompt}
-          onChange={handlePromptChange}
-        />
-        <button className="sub-button" onClick={handleFetchImage}>
-          Submit
-        </button>
-      </div>
+      <form onSubmit={handleFetchImage}>
+  <div className="search-container">
+    <h1>Enter a prompt to create an image!&nbsp;</h1>
+    <input
+      type="text"
+      placeholder="Enter a prompt"
+      value={prompt}
+      onChange={handlePromptChange}
+    />
+    <input type="submit" value="Submit" className="sub-button" />
+  </div>
+</form>
       <DropdownMenu onOptionSelect={handleOptionSelect} />
       {loading ? (
         <div className="loader">
