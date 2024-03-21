@@ -33,6 +33,7 @@ function Homepage({ defaultImage }) {
   const handleFetchImage = async () => {
     if (!loading) {
     setLoading(true)
+    console.time("ImageCreatedTimer")
     try {
       const requestOptions = {
         method: "POST",
@@ -58,11 +59,13 @@ function Homepage({ defaultImage }) {
     // clears input after submit button pressed
     setPrompt("")
     setLoading(false)
+    console.timeEnd("ImageCreatedTimer")
   }
   }
   const handlePressButton = async (row, column) => {
     if (!loading) {
       setLoading(true);
+      console.time("ImageCreatedTimer")
     try {
       // console.log(imageID)
 
@@ -88,6 +91,7 @@ function Homepage({ defaultImage }) {
       console.error("Error fetching image:", error)
     }
     setLoading(false)
+    console.timeEnd("ImageCreatedTimer")
   }
   }
 
