@@ -8,6 +8,30 @@ require("dotenv/config")
 
 
 
+
+const uploadImageToImgur = async (old_image_url) => {
+  // console.log(old_image_url)
+  try {
+    const response = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: process.env.accessToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        image: old_image_url,
+        type: "url"
+      }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error uploading image to Imgur:", error);
+    throw error;
+  }
+};
+
+
 const { Configuration, OpenAI } = require("openai");
 
 const openai = new OpenAI();
@@ -58,22 +82,34 @@ router.post("/Prompt", async (req, res) => {
         prompt: req.body.userInput,
         n: 1,
         size: "1024x1024",
-        response_format: "b64_json"
+        response_format: "url"
       });
       console.log(response)
-      url = response.data[0].b64_json;
+      // url = response.data[0].b64_json;
+      url = response.data[0].url;
 
       var imageStream = Buffer.from(url, "base64");
 
       const channel = client.channels.cache.get("1103168663617556571")
 
 
+      // disc_upload_message = await channel.send({
+      //   content: req.body.userInput,
+      //   files: [{
+      //     attachment: imageStream,
+      //     name: 'file.png'
+      //   }]
+      // })
+
+
+
+
+      const imgurImageUrl = await uploadImageToImgur(url);
+      console.log('Uploading to Imgur: ', imgurImageUrl.data.link)
+
       disc_upload_message = await channel.send({
-        content: req.body.userInput,
-        files: [{
-          attachment: imageStream,
-          name: 'file.png'
-        }]
+        content: req.body.userInput +" "+ imgurImageUrl.data.link,
+
       })
 
 
@@ -82,7 +118,7 @@ router.post("/Prompt", async (req, res) => {
 
       var params = {
         username: "someuser",
-        image_url: disc_upload_message.attachments.first().url,
+        image_url:  imgurImageUrl.data.link,
         image_message_id: disc_upload_message.id,
         prompt: req.body.userInput+" Dall-e 3",
         type: "Upscale",
@@ -106,6 +142,7 @@ router.post("/Prompt", async (req, res) => {
       console.log(a)
       channel.sendSlash("936929561302675456", "imagine", a)
       channel.send(a)
+      var midjourneyparams= {}
 
       const filter = (m) =>
         m.content.startsWith(`**${a}`) &&
@@ -116,16 +153,31 @@ router.post("/Prompt", async (req, res) => {
         .awaitMessages({ filter, max: 1, time: 120_000, errors: ["time"] })
         //   .then(collected=> response.render(__dirname + "/index.ejs", {name:collected.first().attachments.first().url,message_id: collected.first().id}))
         .then((collected) => {
-          var params = {
+
+          midjourneyparams = {
             username: "someuser",
             image_url: collected.first().attachments.first().url,
             image_message_id: collected.first().id,
             prompt: a,
             type: "Original",
             time: collected.first().createdTimestamp,
+            
           }
+          
 
-          console.log(params)
+        
+          return uploadImageToImgur(collected.first().attachments.first().url)
+        }).then((image) => {
+
+          midjourneyparams.image_url = image.data.link
+          params = midjourneyparams
+          console.log(image, "image")
+          console.log(image.data.link)
+
+          
+          
+
+          console.log(params, "params")
 
           Prompt = schemas.Entry(params)
           Prompt.save()
