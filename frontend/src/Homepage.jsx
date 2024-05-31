@@ -104,6 +104,12 @@ function Homepage({ defaultImage }) {
           placeholder="Enter a prompt"
           value={prompt}
           onChange={handlePromptChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleFetchImage();
+            }
+          }}
+          style={{ width: "50%", height: "50%" }}
         />
         <button className="sub-button" onClick={handleFetchImage}>
           Submit
@@ -112,7 +118,7 @@ function Homepage({ defaultImage }) {
       <DropdownMenu onOptionSelect={handleOptionSelect} />
       {loading ? (
         <div className="loader">
-        <img src={loadingPic} alt="Loading" className="loading-placeholder" /> 
+          <img src={loadingPic} alt="Loading" className="loading-placeholder" />
         </div>
       ) : (
         imageURL && (
@@ -131,8 +137,7 @@ function Homepage({ defaultImage }) {
               </a>
             </div>
 
-            {[null,'Upscale'].includes(ImageType) ? (
-              
+            {[null, "Upscale"].includes(ImageType) ? (
               ""
             ) : (
               <div className="buttons">
@@ -171,7 +176,7 @@ function Homepage({ defaultImage }) {
         )
       )}
     </div>
-  )
+  );
 }
 
 export default Homepage
