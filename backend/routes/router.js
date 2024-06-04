@@ -105,6 +105,8 @@ router.post("/Prompt", async (req, res) => {
 
 
       const imgurImageUrl = await uploadImageToImgur(url);
+
+      console.log(imgurImageUrl)
       console.log('Uploading to Imgur: ', imgurImageUrl.data.link)
 
       disc_upload_message = await channel.send({

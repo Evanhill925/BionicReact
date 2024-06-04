@@ -20,3 +20,7 @@ Message @agent coder banks
 backend
 
  node server
+
+
+6/3/2024
+npm run build in the frontend and then :~/BionicReact/backend$ forever start server.js
