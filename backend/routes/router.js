@@ -17,6 +17,7 @@ const uploadImageToImgur = async (old_image_url) => {
       headers: {
         Authorization: process.env.accessToken,
         "Content-Type": "application/json",
+        'User-agent': 'your bot 0.2'
       },
       body: JSON.stringify({
         image: old_image_url,
@@ -104,13 +105,19 @@ router.post("/Prompt", async (req, res) => {
 
 
 
-      const imgurImageUrl = await uploadImageToImgur(url);
+      // const imgurImageUrl = await uploadImageToImgur(url);
 
-      console.log(imgurImageUrl)
-      console.log('Uploading to Imgur: ', imgurImageUrl.data.link)
+      // console.log(imgurImageUrl)
+      // console.log('Uploading to Imgur: ', imgurImageUrl.data.link)
+
+      // disc_upload_message = await channel.send({
+      //   content: req.body.userInput +" "+ imgurImageUrl.data.link,
+
+      // })
+      console.log('Not Uploading to Imgur: ', url)
 
       disc_upload_message = await channel.send({
-        content: req.body.userInput +" "+ imgurImageUrl.data.link,
+        content: req.body.userInput +" "+ url,
 
       })
 
@@ -120,7 +127,7 @@ router.post("/Prompt", async (req, res) => {
 
       var params = {
         username: "someuser",
-        image_url:  imgurImageUrl.data.link,
+        image_url:  url,
         image_message_id: disc_upload_message.id,
         prompt: req.body.userInput+" Dall-e 3",
         type: "Upscale",
@@ -203,6 +210,7 @@ router.post("/Button", async (request, res) => {
   const channel = client.channels.cache.get("1103168663617556571")
   console.log(targetmessage)
   const message = await channel.messages.fetch(request.body.message_id)
+  console.log(message.components)
 
   function determine_type(row, column) {
     if (column === 4) {
@@ -246,6 +254,7 @@ router.post("/Button", async (request, res) => {
   } else {
     // .then(message=>message.clickButton({ row: button_row, col: button_column}));
     message.clickButton({ row: request.body.row_, col: request.body.columns_ })
+    // message.clickButton({ row: 0, col: 0})
     const filter = (m) =>
       m.attachments.size == 1 &&
       m.author.id == "936929561302675456" &&
@@ -254,9 +263,11 @@ router.post("/Button", async (request, res) => {
     var result = channel
       .awaitMessages({ filter, max: 1, time: 120_000, errors: ["time"] })
       .then((collected) => {
-        var params = {
+        
+        
+        old_params = {
           username: "someuser",
-          image_url: collected.first().attachments.first().url,
+          image_url: imgur_url,
           image_message_id: collected.first().id,
           origin_id: request.body.message_id,
           type: determine_type(request.body.row_, request.body.columns_),
@@ -264,6 +275,13 @@ router.post("/Button", async (request, res) => {
           prompt: request.body.prompt,
           quadrant: request.body.columns_,
         }
+        
+        return uploadImageToImgur(collected.first().attachments.first().url)
+
+      }).then((image) => {
+        params = old_params
+
+        params.image_url = image.data.link
 
         console.log(params)
 
