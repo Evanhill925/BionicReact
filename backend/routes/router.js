@@ -76,6 +76,9 @@ router.post("/Prompt", async (req, res) => {
   try {
     if (req.body.model === "Dalle 3") {
       console.log("Dalle 3 subroutine")
+      await channel.send({
+        content: req.body.userInput})
+
 
 
       const response = await openai.images.generate({
@@ -172,13 +175,7 @@ router.post("/Prompt", async (req, res) => {
             time: collected.first().createdTimestamp,
             
           }
-          
 
-        
-          return uploadImageToImgur(collected.first().attachments.first().url)
-        }).then((image) => {
-
-          midjourneyparams.image_url = image.data.link
           params = midjourneyparams
           console.log(image, "image")
           console.log(image.data.link)
@@ -192,6 +189,27 @@ router.post("/Prompt", async (req, res) => {
           Prompt.save()
           res.send(JSON.stringify(params))
         })
+
+          
+
+        
+        //   return uploadImageToImgur(collected.first().attachments.first().url)
+        // }).then((image) => {
+
+        //   midjourneyparams.image_url = image.data.link
+        //   params = midjourneyparams
+        //   console.log(image, "image")
+        //   console.log(image.data.link)
+
+          
+          
+
+        //   console.log(params, "params")
+
+        //   Prompt = schemas.Entry(params)
+        //   Prompt.save()
+        //   res.send(JSON.stringify(params))
+        // })
     }
   } catch (error) {
     console.error("Error in discordbot image:", error)
