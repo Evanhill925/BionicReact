@@ -4,6 +4,8 @@ const schemas = require("../models/schemas")
 // const discord = require("../models/disclogin")
 const { client } = require("../server")
 require("dotenv/config")
+const fs = require('fs');
+const axios = require('axios');
 
 
 
@@ -166,19 +168,58 @@ router.post("/Prompt", async (req, res) => {
         //   .then(collected=> response.render(__dirname + "/index.ejs", {name:collected.first().attachments.first().url,message_id: collected.first().id}))
         .then((collected) => {
 
+          let imageUrl = collected.first().attachments.first().url;
+          const imageMessageId = collected.first().id;
+          // function that checks if process.env.env is production or development
+
+          function isProduction() {
+            return process.env.env === 'production';
+          }
+
+          if (isProduction()) {
+            localFilePath = `../images/${imageMessageId}.png`;
+            imageUrl = `http://bionic-crayons.com/images/${imageMessageId}.png`;
+          }
+          else {
+            localFilePath = `../images/${imageMessageId}.png`;
+
+          }
+
+
+          if (!fs.existsSync('../images')) {
+            fs.mkdirSync('../images', { recursive: true });
+          }
+
           midjourneyparams = {
             username: "someuser",
-            image_url: collected.first().attachments.first().url,
+            image_url: imageUrl,
             image_message_id: collected.first().id,
             prompt: a,
             type: "Original",
             time: collected.first().createdTimestamp,
+            local_file_path: localFilePath
+
+
             
           }
+          axios({
+            url: collected.first().attachments.first().url,
+            responseType: 'stream',
+          }).then(response => {
+            response.data.pipe(fs.createWriteStream(localFilePath))
+              .on('finish', () => {
+                console.log('Image saved locally:', localFilePath);
+              })
+              .on('error', (err) => {
+                console.error('Error saving image:', err);
+              });
+          }).catch(err => {
+            console.error('Error downloading image:', err);
+          });
 
           params = midjourneyparams
-          console.log(image, "image")
-          console.log(image.data.link)
+          // console.log(image, "image")
+          // console.log(image.data.link)
 
           
           
