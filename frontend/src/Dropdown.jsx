@@ -15,12 +15,12 @@ function DropdownMenu({ onOptionSelect }) {
       </h3>
 
       <select onChange={handleOptionChange}>
-        <option value="Dalle 3">Dalle 3</option> 
         <option value="">Midjourney (recommended)</option>
-        <option value=" --niji 6">niji </option>
+        <option value=" --niji 5">niji </option>
         <option value=" --niji 5 --style cute">niji cute</option>
         <option value=" --niji 5 --style scenic">niji scenic</option>
         <option value=" --niji 5 --style expressive">niji expressive</option>
+        <option value="Dalle 3">Dalle 3</option> 
       </select>
     </div>
   )

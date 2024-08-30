@@ -78,6 +78,8 @@ router.post("/Prompt", async (req, res) => {
   try {
     if (req.body.model === "Dalle 3") {
       console.log("Dalle 3 subroutine")
+      const channel = client.channels.cache.get("1103168663617556571")
+
       await channel.send({
         content: req.body.userInput})
 
@@ -96,7 +98,7 @@ router.post("/Prompt", async (req, res) => {
 
       var imageStream = Buffer.from(url, "base64");
 
-      const channel = client.channels.cache.get("1103168663617556571")
+      // const channel = client.channels.cache.get("1103168663617556571")
 
 
       // disc_upload_message = await channel.send({
