@@ -271,7 +271,7 @@ router.post("/Button", async (request, res) => {
   const channel = client.channels.cache.get("1103168663617556571")
   console.log(targetmessage)
   const message = await channel.messages.fetch(request.body.message_id)
-  console.log(message.components)
+  console.log(message.components, "button that i clicked")
 
   function determine_type(row, column) {
     if (column === 4) {
@@ -313,9 +313,8 @@ router.post("/Button", async (request, res) => {
     console.log("variant already in database.")
     res.send(JSON.stringify(premade_image))
   } else {
-    // .then(message=>message.clickButton({ row: button_row, col: button_column}));
-    message.clickButton({ row: request.body.row_, col: request.body.columns_ })
-    // message.clickButton({ row: 0, col: 0})
+    message.clickButton({ Y: request.body.row_, X: request.body.columns_ })
+    // message.clickButton({ Y: 1, X: 2})
     const filter = (m) =>
       m.attachments.size == 1 &&
       m.author.id == "936929561302675456" &&
@@ -328,7 +327,7 @@ router.post("/Button", async (request, res) => {
         
         old_params = {
           username: "someuser",
-          image_url: imgur_url,
+          image_url: collected.first().attachments.first().url,
           image_message_id: collected.first().id,
           origin_id: request.body.message_id,
           type: determine_type(request.body.row_, request.body.columns_),
@@ -337,12 +336,12 @@ router.post("/Button", async (request, res) => {
           quadrant: request.body.columns_,
         }
         
-        return uploadImageToImgur(collected.first().attachments.first().url)
+        // return uploadImageToImgur(collected.first().attachments.first().url)
 
       }).then((image) => {
         params = old_params
 
-        params.image_url = image.data.link
+        // params.image_url = image.data.link
 
         console.log(params)
 
