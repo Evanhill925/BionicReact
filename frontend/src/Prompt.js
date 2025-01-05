@@ -12,7 +12,7 @@ export function Prompt(row,column) {
                   console.log(data)
           try{
 
-            fetch("http://localhost:4000/Button",data)
+            fetch("https://localhost:4000/Button",data)
             console.log('this workeds')
           }
         catch (error) {
