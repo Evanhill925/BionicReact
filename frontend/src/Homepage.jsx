@@ -39,7 +39,7 @@ function Homepage({ defaultImage }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userInput: `a gross goblin ${prompt}`,
+          userInput: `${prompt} with a gross goblin lurking in the background`,
           model: `${selectedOption ? selectedOption : " --v 6.1"}`
           // quality: " --quality .25",
         }),
@@ -50,7 +50,7 @@ function Homepage({ defaultImage }) {
 
       setImageID(data.image_message_id)
       setImageURL(data.image_url)
-      setImagePrompt(data.prompt.replace("a goblin", ""))
+      setImagePrompt(data.prompt.replace("with a gross goblin lurking in the background", ""))
       setImageType(data.type)
       window.history.pushState(null, "", `?image=${data.image_message_id}`)
     } catch (error) {
