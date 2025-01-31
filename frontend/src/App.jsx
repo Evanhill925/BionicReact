@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     const fetchImages = async () => {
-      const res = await fetch("http://localhost:4000/gallery")
+      const res = await fetch("https://localhost:4000/gallery")
       const data = await res.json()
       setImages(data)
       setOriginals(data)
