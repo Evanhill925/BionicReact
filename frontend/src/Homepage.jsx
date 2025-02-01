@@ -50,7 +50,7 @@ function Homepage({ defaultImage }) {
 
       setImageID(data.image_message_id)
       setImageURL(data.image_url)
-      setImagePrompt(data.prompt.replace("with a small goblin in the background", ""))
+      setImagePrompt(data.prompt.replace("with a small goblin lurking in the background", ""))
       setImageType(data.type)
       window.history.pushState(null, "", `?image=${data.image_message_id}`)
     } catch (error) {
