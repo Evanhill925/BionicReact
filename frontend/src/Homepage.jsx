@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef} from "react"
 import DropdownMenu from "./Dropdown"
 import loadingPic from "./loader.svg"
 
 
 function Homepage({ defaultImage }) {
   const [prompt, setPrompt] = useState("")
+  const [uploadedImage, setUploadedImage] = useState()
+  const [uploadedImageText, setUploadImageText]= useState()
   const [imageURL, setImageURL] = useState("")
   const [imageID, setImageID] = useState("")
   const [ImagePrompt, setImagePrompt] = useState()
   const [ImageType, setImageType] = useState()
   const [selectedOption, setSelectedOption] = useState("")
-  const [loading, setLoading] = useState()
+  const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState();
   const uriPath= import.meta.env.VITE_uriPath;
 
   useEffect(() => {
@@ -30,6 +33,41 @@ function Homepage({ defaultImage }) {
     setSelectedOption(option)
   }
 
+
+  const handleImage = async () => {
+  try {
+    const response = await fetch(`${uriPath}/upload-image`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64Image: uploadedImage, prompt : prompt}), // `prompt` contains the base64 string
+    });
+
+    const data = await response.json();
+    console.log("this is the data",data)
+    setUploadImageText(data.output_text || "No response text")
+    return data;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+  }
+};
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Convert to Base64
+      reader.onloadend = () => {
+        setUploadedImage(reader.result); // Store Base64 string
+        console.log("reader",reader.result)
+      };
+    }
+  };
+  const resetFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset input value
+    }
+  };
+
   const handleFetchImage = async () => {
     if (!loading) {
     setLoading(true)
@@ -39,7 +77,7 @@ function Homepage({ defaultImage }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userInput: `${prompt} with a small goblin lurking in the background`,
+          userInput: `${prompt}`,
           model: `${selectedOption ? selectedOption : " --v 6.1"}`
           // quality: " --quality .25",
         }),
@@ -116,6 +154,37 @@ function Homepage({ defaultImage }) {
         </button>
       </div>
       <DropdownMenu onOptionSelect={handleOptionSelect} />
+
+      {/* <div className="search-container">
+      <h1>Upload an image!&nbsp;</h1>
+      <input
+        type="file"
+        accept="image/*"
+        value={prompt}
+        onChange={handleImageChange}
+        ref={fileInputRef}
+      />
+       <button className="sub-button" onClick={resetFileInput}>
+          Submit
+        </button>
+    </div> */}
+        <div className="search-container">
+        <h1>Upload an image!&nbsp;</h1>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          ref={fileInputRef}
+        />
+        <button className="sub-button" onClick={handleImage}>
+          Submit Image
+        </button>
+        <button className="sub-button" onClick={resetFileInput}>
+          Clear
+        </button>
+        {uploadedImageText && <h3>{uploadedImageText}</h3>}
+        </div>
+        
       {loading ? (
         <div className="loader">
           <img src={loadingPic} alt="Loading" className="loading-placeholder" />

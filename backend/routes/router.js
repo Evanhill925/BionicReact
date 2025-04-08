@@ -357,4 +357,47 @@ router.post("/Button", async (request, res) => {
   }
 })
 
+
+
+router.post("/upload-image", async (req, res) => {
+  console.log("CHECK HERE",process.env.OPENAI_API_KEY)
+  try {
+    const { base64Image } = req.body;
+
+    if (!base64Image) {
+      return res.status(400).send({ error: "No image provided" });
+    }
+
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+          {
+              role: "user",
+              content: [
+                  { type: "text", text: `${req.body.prompt}` }, // prompt needs to go here 
+                  {
+                      type: "image_url",
+                      image_url: { url:`${base64Image}`}
+                  },
+ 
+            ],
+          },
+        ],
+        max_tokens: 300,
+      },
+   
+    );
+    console.log(response.choices[0].message.content);
+    return res.send({ output_text: response.choices[0].message.content }); 
+  } catch (error) {
+    console.error("Error calling OpenAI API:", error);
+  
+  }
+ 
+});
+
+  
+  
+  
 module.exports = router
