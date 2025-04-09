@@ -55,14 +55,21 @@ const openai = new OpenAI();
 router.get("/", (req, res) => {})
 
 router.get("/userImages/:num", async (req, res) => {
-  const entry = schemas.Entry
-  const pulledFromDb = await entry.find({}).exec()
-  let heldItems = pulledFromDb.slice(-Number(req.params.num)).reverse()
+  const entry = schemas.Entry;
+  
+  const num = Number(req.params.num);  // Get the number from the request parameter
+
+  // Query to fetch the last `num` entries, sorted by creation date (descending order)
+  const heldItems = await entry
+    .find({})
+    .sort({ _id: -1 })  // Sort by _id in descending order, which reflects the creation time
+    .limit(num)          // Limit to the number of items requested
+    .exec();
 
   if (heldItems) {
-    res.send(JSON.stringify(heldItems))
+    res.send(JSON.stringify(heldItems));  // Send the results as JSON
   }
-})
+});
 
 router.get("/home", async (req, res) => {
   const entry = schemas.Entry
