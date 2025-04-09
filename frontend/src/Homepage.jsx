@@ -39,7 +39,7 @@ function Homepage({ defaultImage }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userInput: `${prompt} with a small goblin lurking in the background`,
+          userInput: `${prompt}`,
           model: `${selectedOption ? selectedOption : " --v 6.1"}`
           // quality: " --quality .25",
         }),

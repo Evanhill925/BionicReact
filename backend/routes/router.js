@@ -10,7 +10,7 @@ const axios = require('axios');
 const AWS = require('aws-sdk');
 
 // Set the AWS region
-AWS.config.update({ region: 'us-east-2  ' });
+AWS.config.update({ region: 'us-east-2' });
 
 // Create an S3 service object
 const s3 = new AWS.S3();
@@ -19,6 +19,7 @@ const s3 = new AWS.S3();
 // Function to upload an image from URL to S3
 async function uploadImageFromUrlToS3(imageUrl, objectName) {
   try {
+    console.log('Uploading image from URL to S3:')
       // Fetch the image content from the URL using axios
       const response = await axios({
           method: 'get',
