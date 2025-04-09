@@ -10,7 +10,7 @@ const axios = require('axios');
 const AWS = require('aws-sdk');
 
 // Set the AWS region
-AWS.config.update({ region: 'us-east-2' });
+AWS.config.update({ region: 'us-east-1' });
 
 // Create an S3 service object
 const s3 = new AWS.S3();
@@ -208,12 +208,7 @@ router.post("/Prompt", async (req, res) => {
           uploadImageFromUrlToS3(imageUrl, imageMessageId).then((s3_url) => {
             midjourneyparams.image_url = s3_url
             console.log(s3_url)
-          }
-          )
-
-          
-
-          params = midjourneyparams
+            params = midjourneyparams
           // console.log(image, "image")
           // console.log(image.data.link)
           console.log(params, "params")
@@ -221,6 +216,8 @@ router.post("/Prompt", async (req, res) => {
           Prompt = schemas.Entry(params)
           Prompt.save()
           res.send(JSON.stringify(params))
+          }
+          )  
         })
 
           
@@ -310,16 +307,16 @@ router.post("/Button", async (request, res) => {
           quadrant: request.body.columns_,
         }
 
-        uploadImageFromUrlToS3(old_params.image_url, old_params.image_message_id).then((s3_url) => {
-          old_params.image_url = s3_url
-          console.log(s3_url)
-        }
-        )
+        
         
         // return uploadImageToImgur(collected.first().attachments.first().url)
 
       }).then((image) => {
-        params = old_params
+
+        uploadImageFromUrlToS3(old_params.image_url, old_params.image_message_id).then((s3_url) => {
+          old_params.image_url = s3_url
+          console.log(s3_url)
+          params = old_params
 
         // params.image_url = image.data.link
 
@@ -328,6 +325,9 @@ router.post("/Button", async (request, res) => {
         Prompt = new entry(params)
         Prompt.save()
         res.send(JSON.stringify(params))
+        }
+        )
+        
       })
       .catch((collected) =>
         console.log(
