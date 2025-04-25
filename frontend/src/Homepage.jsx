@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react"
 import DropdownMenu from "./Dropdown"
 import loadingPic from "./loader.svg"
+import Header from "./Header"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function Homepage({ defaultImage }) {
@@ -39,7 +41,7 @@ function Homepage({ defaultImage }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userInput: `${prompt} with a small goblin lurking in the background`,
+          userInput: `${prompt}`,
           model: `${selectedOption ? selectedOption : " --v 6.1"}`
           // quality: " --quality .25",
         }),
@@ -96,87 +98,88 @@ function Homepage({ defaultImage }) {
   }
 
   return (
-    <div>
-      <div className="search-container">
-        <h1>Enter a prompt to create an image!&nbsp;</h1>
-        <input
-          type="text"
-          placeholder="Enter a prompt"
-          value={prompt}
-          onChange={handlePromptChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleFetchImage();
-            }
-          }}
-          style={{ width: "50%", height: "50%" }}
-        />
-        <button className="sub-button" onClick={handleFetchImage}>
-          Submit
-        </button>
-      </div>
+<div className="container py-4 bg-dark text-light min-vh-100">
+  <div className="text-center mb-4">
+    <h1>Enter a prompt to create an image.</h1>
+  </div>
+
+  <div className="row justify-content-center mb-3">
+    <div className="col-12 col-md-8 d-flex flex-column flex-md-row align-items-center gap-2">
+      <input
+        type="text"
+        className="form-control bg-secondary text-light border-0"
+        placeholder="Enter a prompt"
+        value={prompt}
+        onChange={handlePromptChange}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleFetchImage();
+          }
+        }}
+      />
+      <button
+        className="btn btn-light fw-bold px-4"
+        onClick={handleFetchImage}
+      >
+        Submit
+      </button>
+    </div>
+  </div>
+
+  <div className="row justify-content-center mb-4">
+    <div className="col-auto">
       <DropdownMenu onOptionSelect={handleOptionSelect} />
-      {loading ? (
-        <div className="loader">
-          <img src={loadingPic} alt="Loading" className="loading-placeholder" />
-        </div>
-      ) : (
-        imageURL && (
-          <div>
-            <h2 className="prompt-title">
-              {ImagePrompt ? ImagePrompt : defaultImage.prompt}
-            </h2>
+    </div>
+  </div>
 
-            <div className="primary-image-container">
-              <a target="_blank" href={imageURL}>
-                <img
-                  src={imageURL}
-                  alt="Generated Image"
-                  className="primary-image"
-                />
-              </a>
-            </div>
+  {loading ? (
+    <div className="d-flex justify-content-center">
+      <img src={loadingPic} alt="Loading" className="img-fluid" />
+    </div>
+  ) : (
+    imageURL && (
+      <>
+        <h2 className="text-center mb-3">
+          {ImagePrompt || defaultImage.prompt}
+        </h2>
 
-            {[null, "Upscale"].includes(ImageType) ? (
-              ""
-            ) : (
-              <div className="buttons">
+        <div className="d-flex justify-content-center mb-3">
+  <a href={imageURL} target="_blank" rel="noopener noreferrer">
+    <img
+      src={imageURL}
+      alt="Generated"
+      className="img-fluid rounded shadow"
+      style={{ maxWidth: "100%", height: "auto", maxHeight: "80vh" }}
+    />
+  </a>
+</div>
+
+        {![null, "Upscale"].includes(ImageType) && (
+          <div className="d-flex flex-wrap justify-content-center gap-2">
+            {["U1", "U2", "U3", "U4", "↻", "V1", "V2", "V3", "V4"].map(
+              (label, i) => (
                 <button
-                  title="Upscale top left image"
-                  onClick={() => handlePressButton(0, 0)}
+                  key={label}
+                  className="btn btn-outline-light"
+                  onClick={() => {
+                    const isU = label.startsWith("U");
+                    const isV = label.startsWith("V");
+                    const index = label === "↻" ? 4 : parseInt(label[1], 10) - 1;
+                    handlePressButton(isU ? 0 : isV ? 1 : 0, index);
+                  }}
                 >
-                  U1
+                  {label}
                 </button>
-                <button
-                  title="Upscale top right image"
-                  onClick={() => handlePressButton(0, 1)}
-                >
-                  U2
-                </button>
-                <button
-                  title="Upscale bottom left image"
-                  onClick={() => handlePressButton(0, 2)}
-                >
-                  U3
-                </button>
-                <button
-                  title="Upscale bottom right image"
-                  onClick={() => handlePressButton(0, 3)}
-                >
-                  U4
-                </button>
-                <button onClick={() => handlePressButton(0, 4)}>↻</button>
-                <button onClick={() => handlePressButton(1, 0)}>V1</button>
-                <button onClick={() => handlePressButton(1, 1)}>V2</button>
-                <button onClick={() => handlePressButton(1, 2)}>V3</button>
-                <button onClick={() => handlePressButton(1, 3)}>V4</button>
-              </div>
+              )
             )}
           </div>
-        )
-      )}
-    </div>
-  );
+        )}
+      </>
+    )
+  )}
+</div>
+
+  )
 }
 
 export default Homepage

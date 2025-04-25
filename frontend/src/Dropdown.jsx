@@ -9,12 +9,12 @@ function DropdownMenu({ onOptionSelect }) {
 
   return (
     <div className="dropdown-container">
-      <h3>
-        Here are some exciting extras that'll add a sprinkle of fun to your
+      <h3 style={{color:"rgb(232, 232, 232)"}}> 
+        Here are some exciting styles that'll add a sprinkle of fun to your
         experience!&nbsp;
       </h3>
 
-      <select onChange={handleOptionChange}>
+      <select onChange={handleOptionChange}style={{borderRadius:"5px"}}>
         <option value="">Midjourney (recommended)</option>
         <option value=" --niji 6">niji </option>
         <option value="Dalle 3">Dalle 3</option> 

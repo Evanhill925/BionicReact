@@ -1,0 +1,87 @@
+    <div>
+      <div className="search-container">
+      <h1 style={{color:"rgb(232, 232, 232)"}}>Enter a prompt to create an image.&nbsp;</h1>
+      </div>
+      <div className="search-container" >
+       
+        <input
+          type="text"
+          placeholder="Enter a prompt"
+          value={prompt}
+          onChange={handlePromptChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleFetchImage();
+            }
+          }}
+          style={{ width: "700px", height: "30px", backgroundColor: "rgb(232, 232, 232)" }}
+        />
+        <button className="sub-button" onClick={handleFetchImage}
+        style={{height: "34px", width: "100px", fontWeight:"bolder"}}>
+          Submit
+        </button>
+      </div>
+     
+      <DropdownMenu onOptionSelect={handleOptionSelect} />
+  
+      {loading ? (
+        <div className="loader">
+          <img src={loadingPic} alt="Loading" className="loading-placeholder" />
+        </div>
+      ) : (
+        imageURL && (
+          <div>
+            <h2 className="prompt-title" style={{color:"rgb(232, 232, 232)"}}>
+              {ImagePrompt ? ImagePrompt : defaultImage.prompt}
+            </h2>
+
+            <div className="primary-image-container">
+              <a target="_blank" href={imageURL}>
+                <img
+                  src={imageURL}
+                  alt="Generated Image"
+                  className="primary-image"
+                />
+              </a>
+            </div>
+
+            {[null, "Upscale"].includes(ImageType) ? (
+              ""
+            ) : (
+              <div className="buttons">
+                <button
+                  title="Upscale top left image"
+                  onClick={() => handlePressButton(0, 0)}
+                >
+                  U1
+                </button>
+                <button
+                  title="Upscale top right image"
+                  onClick={() => handlePressButton(0, 1)}
+                >
+                  U2
+                </button>
+                <button
+                  title="Upscale bottom left image"
+                  onClick={() => handlePressButton(0, 2)}
+                >
+                  U3
+                </button>
+                <button
+                  title="Upscale bottom right image"
+                  onClick={() => handlePressButton(0, 3)}
+                >
+                  U4
+                </button>
+                <button onClick={() => handlePressButton(0, 4)}>↻</button>
+                <button onClick={() => handlePressButton(1, 0)}>V1</button>
+                <button onClick={() => handlePressButton(1, 1)}>V2</button>
+                <button onClick={() => handlePressButton(1, 2)}>V3</button>
+                <button onClick={() => handlePressButton(1, 3)}>V4</button>
+              </div>
+            )}
+          </div>
+        )
+      )}
+    </div>
+  );

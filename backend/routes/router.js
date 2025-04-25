@@ -67,6 +67,7 @@ router.get("/image/:imageID", async (req, res) => {
     .exec()
   if (image_for_display) {
     res.send(JSON.stringify(image_for_display))
+    console.log("THIS IS THE IMAGE CLICK ROUTE")
   }
 })
 

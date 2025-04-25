@@ -1,0 +1,119 @@
+/* Custom Theme Styles for Bionic React */
+
+/* Base theme transitions for smooth theme switching */
+body, 
+.card, 
+.navbar, 
+.form-control, 
+.btn, 
+.pagination, 
+.alert {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark theme specific styles */
+[data-bs-theme="dark"] .pagination-dark .page-link {
+  background-color: #343a40;
+  border-color: #454d55;
+  color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .pagination-dark .page-item.active .page-link {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+[data-bs-theme="dark"] .pagination-dark .page-item.disabled .page-link {
+  background-color: #343a40;
+  border-color: #454d55;
+  color: #6c757d;
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+  background-color: #2b3035;
+  color: #f8f9fa;
+  border-color: #6c757d;
+  box-shadow: 0 0 0 0.25rem rgba(130, 138, 145, 0.25);
+}
+
+/* Light theme specific styles */
+[data-bs-theme="light"] .form-control:focus {
+  border-color: #6c757d;
+  box-shadow: 0 0 0 0.25rem rgba(130, 138, 145, 0.25);
+}
+
+/* Image hover effects */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Theme toggle button animation */
+.btn-outline-light:hover, 
+.btn-outline-dark:hover {
+  transition: all 0.3s ease;
+}
+
+/* Fix buttons spacing in mobile view */
+.btn-group {
+  flex-wrap: wrap;
+}
+
+.btn-group .btn {
+  margin: 2px;
+}
+
+/* Set consistent container width across the application */
+.container {
+  max-width: 1000px !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Card styling for image display */
+.card {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.card img {
+  transition: transform 0.3s ease;
+}
+
+.card:hover img {
+  transform: scale(1.03);
+}
+
+/* Make sure forms have consistent styling */
+.form-control {
+  border-radius: 4px;
+}
+
+/* Navbar styling */
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Consistent main container padding */
+.main-container {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
