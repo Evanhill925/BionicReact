@@ -7,32 +7,45 @@ require("dotenv/config")
 const fs = require('fs');
 const axios = require('axios');
 
+const AWS = require('aws-sdk');
+
+// Set the AWS region
+AWS.config.update({ region: 'us-east-1' });
+
+// Create an S3 service object
+const s3 = new AWS.S3();
 
 
-
-
-const uploadImageToImgur = async (old_image_url) => {
-  // console.log(old_image_url)
+// Function to upload an image from URL to S3
+async function uploadImageFromUrlToS3(imageUrl, objectName) {
   try {
-    const response = await fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: process.env.accessToken,
-        "Content-Type": "application/json",
-        'User-agent': 'your bot 0.2'
-      },
-      body: JSON.stringify({
-        image: old_image_url,
-        type: "url"
-      }),
-    });
-    const data = await response.json();
-    return data;
+    console.log('Uploading image from URL to S3:')
+      // Fetch the image content from the URL using axios
+      const response = await axios({
+          method: 'get',
+          url: imageUrl,
+          responseType: 'arraybuffer'  // Important: Get the image as binary data
+      });
+
+      // Set up the S3 upload parameters
+      const params = {
+          Bucket: 'bioniccrayonbucket',       // S3 Bucket name
+          Key: objectName,          // Name of the file in the bucket
+          Body: response.data,      // Image content (binary data)
+          ContentType: response.headers['content-type'] // Dynamically set the content type from the response headers
+      };
+
+      // Upload the image to S3
+      const uploadResult = await s3.upload(params).promise();
+
+        // Return the location (URL) of the uploaded image
+        return uploadResult.Location;
+
   } catch (error) {
-    console.error("Error uploading image to Imgur:", error);
-    throw error;
+      console.error('Error downloading or uploading the image:', error);
   }
-};
+}
+
 
 
 const { Configuration, OpenAI } = require("openai");
@@ -42,14 +55,21 @@ const openai = new OpenAI();
 router.get("/", (req, res) => {})
 
 router.get("/userImages/:num", async (req, res) => {
-  const entry = schemas.Entry
-  const pulledFromDb = await entry.find({}).exec()
-  let heldItems = pulledFromDb.slice(-Number(req.params.num)).reverse()
+  const entry = schemas.Entry;
+  
+  const num = Number(req.params.num);  // Get the number from the request parameter
+
+  // Query to fetch the last `num` entries, sorted by creation date (descending order)
+  const heldItems = await entry
+    .find({})
+    .sort({ _id: -1 })  // Sort by _id in descending order, which reflects the creation time
+    .limit(num)          // Limit to the number of items requested
+    .exec();
 
   if (heldItems) {
-    res.send(JSON.stringify(heldItems))
+    res.send(JSON.stringify(heldItems));  // Send the results as JSON
   }
-})
+});
 
 router.get("/home", async (req, res) => {
   const entry = schemas.Entry
@@ -99,29 +119,6 @@ router.post("/Prompt", async (req, res) => {
 
       var imageStream = Buffer.from(url, "base64");
 
-      // const channel = client.channels.cache.get("1103168663617556571")
-
-
-      // disc_upload_message = await channel.send({
-      //   content: req.body.userInput,
-      //   files: [{
-      //     attachment: imageStream,
-      //     name: 'file.png'
-      //   }]
-      // })
-
-
-
-
-      // const imgurImageUrl = await uploadImageToImgur(url);
-
-      // console.log(imgurImageUrl)
-      // console.log('Uploading to Imgur: ', imgurImageUrl.data.link)
-
-      // disc_upload_message = await channel.send({
-      //   content: req.body.userInput +" "+ imgurImageUrl.data.link,
-
-      // })
       console.log('Not Uploading to Imgur: ', url)
 
       disc_upload_message = await channel.send({
@@ -130,12 +127,22 @@ router.post("/Prompt", async (req, res) => {
       })
 
 
+      
+
+    
+
+      s3_url = await uploadImageFromUrlToS3(url, disc_upload_message.id);
+
+      console.log(s3_url)
+
+
+
 
 
 
       var params = {
         username: "someuser",
-        image_url:  url,
+        image_url:  s3_url,
         image_message_id: disc_upload_message.id,
         prompt: req.body.userInput+" Dall-e 3",
         type: "Upscale",
@@ -181,7 +188,7 @@ router.post("/Prompt", async (req, res) => {
 
           if (isProduction()) {
             localFilePath = `../images/${imageMessageId}.png`;
-            imageUrl = `http://bionic-crayons.com/images/${imageMessageId}.png`;
+            imageUrl = `https://bionic-crayons.com/images/${imageMessageId}.png`;
           }
           else {
             localFilePath = `../images/${imageMessageId}.png`;
@@ -205,55 +212,26 @@ router.post("/Prompt", async (req, res) => {
 
             
           }
-          axios({
-            url: collected.first().attachments.first().url,
-            responseType: 'stream',
-          }).then(response => {
-            response.data.pipe(fs.createWriteStream(localFilePath))
-              .on('finish', () => {
-                console.log('Image saved locally:', localFilePath);
-              })
-              .on('error', (err) => {
-                console.error('Error saving image:', err);
-              });
-          }).catch(err => {
-            console.error('Error downloading image:', err);
-          });
 
-          params = midjourneyparams
+          uploadImageFromUrlToS3(imageUrl, imageMessageId).then((s3_url) => {
+            midjourneyparams.image_url = s3_url
+            console.log(s3_url)
+            params = midjourneyparams
           // console.log(image, "image")
           // console.log(image.data.link)
-
-          
-          
-
           console.log(params, "params")
 
           Prompt = schemas.Entry(params)
           Prompt.save()
           res.send(JSON.stringify(params))
+          }
+          )  
         })
 
           
 
         
-        //   return uploadImageToImgur(collected.first().attachments.first().url)
-        // }).then((image) => {
 
-        //   midjourneyparams.image_url = image.data.link
-        //   params = midjourneyparams
-        //   console.log(image, "image")
-        //   console.log(image.data.link)
-
-          
-          
-
-        //   console.log(params, "params")
-
-        //   Prompt = schemas.Entry(params)
-        //   Prompt.save()
-        //   res.send(JSON.stringify(params))
-        // })
     }
   } catch (error) {
     console.error("Error in discordbot image:", error)
@@ -336,11 +314,17 @@ router.post("/Button", async (request, res) => {
           prompt: request.body.prompt,
           quadrant: request.body.columns_,
         }
+
+        
         
         // return uploadImageToImgur(collected.first().attachments.first().url)
 
       }).then((image) => {
-        params = old_params
+
+        uploadImageFromUrlToS3(old_params.image_url, old_params.image_message_id).then((s3_url) => {
+          old_params.image_url = s3_url
+          console.log(s3_url)
+          params = old_params
 
         // params.image_url = image.data.link
 
@@ -349,6 +333,9 @@ router.post("/Button", async (request, res) => {
         Prompt = new entry(params)
         Prompt.save()
         res.send(JSON.stringify(params))
+        }
+        )
+        
       })
       .catch((collected) =>
         console.log(
