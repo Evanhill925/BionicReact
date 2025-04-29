@@ -5,7 +5,12 @@ const schemas = require("../models/schemas")
 const { client } = require("../server")
 require("dotenv/config")
 const fs = require('fs');
+const {resolve, path } = require('path');
 const axios = require('axios');
+const { Readable } = require("stream");
+const { createReadStream } = require('fs');
+
+
 
 
 
@@ -35,7 +40,7 @@ const uploadImageToImgur = async (old_image_url) => {
 };
 
 
-const { Configuration, OpenAI } = require("openai");
+const { Configuration, OpenAI, toFile } = require("openai");
 
 const openai = new OpenAI();
 
@@ -357,42 +362,117 @@ router.post("/Button", async (request, res) => {
   }
 })
 
-
+function base64ToStream(b64) {
+  const buffer = Buffer.from(b64, "base64")
+  return Readable.from(buffer);
+}
 
 router.post("/upload-image", async (req, res) => {
   console.log("CHECK HERE",process.env.OPENAI_API_KEY)
   try {
+    
+    // Get the base64 image from the request
     const { base64Image } = req.body;
-
+    
+    // Create a temporary file with the image
+    const tempImagePath = './temp_upload.jpeg';
+    
+    // Make sure the base64 data doesn't include the data:image prefix
+    const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
+    
+    // Write the image data to a file with proper MIME type
+    fs.writeFileSync(tempImagePath, Buffer.from(base64Data, 'base64'));
+    
+    // Create a proper File object with explicit MIME type
+    const imageFile = await toFile(
+      fs.createReadStream(tempImagePath),
+      'image.jpeg',
+      { type: 'image/jpeg' }
+    );
+    
+    console.log('Created image file:', imageFile);
+    console.log('Image file MIME type:', imageFile.type);
     if (!base64Image) {
       return res.status(400).send({ error: "No image provided" });
     }
 
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-          {
-              role: "user",
-              content: [
-                  { type: "text", text: `${req.body.prompt}` }, // prompt needs to go here 
-                  {
-                      type: "image_url",
-                      image_url: { url:`${base64Image}`}
-                  },
+    // const response = await openai.images.generate({
+    //   model: "dall-e-3",
+    //   prompt: req.body.userInput,
+    //   n: 1,
+    //   size: "1024x1024",
+    //   response_format: "url"
+    // });
+    
+    const imageFiles = [
+      "/home/mindboggle/repo/BionicReact/backend/routes/im1.png",
+      "/home/mindboggle/repo/BionicReact/backend/routes/im2.png",
+      "/home/mindboggle/repo/BionicReact/backend/routes/im3.png",
+  ];
  
-            ],
+  const imagesTester = await Promise.all(
+      imageFiles.map(async (file) =>
+          await toFile(fs.createReadStream(file), null, {
+              type: "image/png",
           },
-        ],
-        max_tokens: 300,
+          console.log("image file",file))
+         
+      ),
+  );
+
+    const response = await openai.images.edit({
+      model: "gpt-image-1",
+      prompt:`${req.body.prompt}`,
+      image: await toFile(
+        createReadStream(resolve(__dirname, "/home/mindboggle/repo/BionicReact/backend/routes/im1.png"))),
+      // response_format: "url",
+      // messages: [
+      //     {
+      //         role: "user",
+      //         content: [
+      //             { type: "text", text: `${req.body.prompt}` },  
+      //             {
+      //                 type: "image_url",
+      //                 image_url: { url:`${base64Image}`}
+      //             },
+ 
+      //       ],
+      //     },
+      //   ],
       },
    
     );
-    console.log(response.choices[0].message.content);
-    return res.send({ output_text: response.choices[0].message.content }); 
+    
+    // Clean up the temporary file
+    try {
+      fs.unlinkSync(tempImagePath);
+    } catch (cleanupError) {
+      console.warn("Warning: Failed to delete temporary file:", cleanupError);
+    }
+    
+    console.log(response.choices[0].message.content, response);
+    return res.send({ output_text: response.choices[0].message.content });
   } catch (error) {
     console.error("Error calling OpenAI API:", error);
-  
+    
+    // Provide more detailed error information for MIME type issues
+    // if (error.code === 'unsupported_file_mimetype') {
+    //   console.error("MIME type error details:", {
+    //     imageFile: imageFile,
+    //     // mimeType: imageFile.type || 'unknown'
+    //   });
+    //   return res.status(400).send({
+    //     error: "Image format error",
+    //     details: "The image could not be processed because its format is not supported. Please use JPEG, PNG, or WebP formats.",
+    //     technical_details: error.message
+    //   });
+    // }
+    
+    // Return a more user-friendly error
+    return res.status(500).send({
+      error: "Error processing image",
+      details: error.message
+    });
   }
  
 });

@@ -32,7 +32,10 @@ function Homepage({ defaultImage }) {
     // Update the selected option in the Homepage component's state
     setSelectedOption(option)
   }
-
+  const trim64 = (param) =>{
+    return param.replace("data:image/jpeg;base64,","")
+    
+   }
 
   const handleImage = async () => {
   try {
@@ -57,11 +60,16 @@ function Homepage({ defaultImage }) {
       const reader = new FileReader();
       reader.readAsDataURL(file); // Convert to Base64
       reader.onloadend = () => {
-        setUploadedImage(reader.result); // Store Base64 string
-        console.log("reader",reader.result)
+        let imageResult = trim64(reader.result)
+        console.log("india #1",imageResult)
+        setUploadedImage(imageResult); // Store Base64 string
+        
       };
     }
   };
+
+
+  
   const resetFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Reset input value
