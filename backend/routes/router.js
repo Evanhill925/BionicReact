@@ -132,8 +132,8 @@ router.post("/Prompt", async (req, res) => {
       console.log("Dalle 3 subroutine")
       const channel = client.channels.cache.get("1103168663617556571")
 
-      await channel.send({
-        content: req.body.userInput})
+      // await channel.send({
+      //   content: req.body.userInput})
 
 
 
@@ -191,9 +191,6 @@ router.post("/Prompt", async (req, res) => {
         console.log("gpt-image-1 subroutine")
         const channel = client.channels.cache.get("1103168663617556571")
   
-        await channel.send({
-          content: req.body.userInput})
-  
   
   
         const response = await openai.images.generate({
@@ -223,6 +220,11 @@ router.post("/Prompt", async (req, res) => {
         })
   
         s3_url = await uploadImageFromB64ToS3(rawdata, disc_upload_message.id);
+        
+        disc_upload_message = await channel.send({
+          content: req.body.userInput +" "+ s3_url,
+  
+        })
 
         
   
