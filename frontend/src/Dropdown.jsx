@@ -16,6 +16,7 @@ function DropdownMenu({ onOptionSelect }) {
 
       <select onChange={handleOptionChange}style={{borderRadius:"5px"}}>
         <option value="">Midjourney (recommended)</option>
+        <option value="gpt-image-1">GPT Image</option>
         <option value=" --niji 6">niji </option>
         <option value="Dalle 3">Dalle 3</option> 
       </select>

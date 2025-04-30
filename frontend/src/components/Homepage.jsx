@@ -146,15 +146,19 @@ function Homepage({ defaultImage }) {
               style={{ maxWidth: '300px' }}
               className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
             >
-              <option value="">Select Model (Default: v6.1)</option>
-              <option value=" --v 5.1">Version 5.1</option>
-              <option value=" --v 5.2">Version 5.2</option>
-              <option value=" --v 6">Version 6.0</option>
-              <option value=" --v 6.1">Version 6.1</option>
+           <option value="">Midjourney (recommended)</option>
+           <option value="gpt-image-1">GPT Image</option>
+           <option value=" --niji 6">niji </option>
+           <option value="Dalle 3">Dalle 3</option> 
             </Form.Select>
           </div>
         </Col>
       </Row>
+
+
+      
+
+
 
       {/* Loading indicator or image display */}
       {loading ? (

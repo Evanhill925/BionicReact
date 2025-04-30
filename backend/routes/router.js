@@ -27,6 +27,7 @@ async function uploadImageFromUrlToS3(imageUrl, objectName) {
           responseType: 'arraybuffer'  // Important: Get the image as binary data
       });
 
+
       // Set up the S3 upload parameters
       const params = {
           Bucket: 'bioniccrayonbucket',       // S3 Bucket name
@@ -45,6 +46,36 @@ async function uploadImageFromUrlToS3(imageUrl, objectName) {
       console.error('Error downloading or uploading the image:', error);
   }
 }
+
+
+async function uploadImageFromB64ToS3(b64, objectName) {
+  try {
+    
+
+    const base64Data = b64.replace(/^data:image\/\w+;base64,/, '');
+
+    // Convert base64 string to a Buffer
+    const buffer = Buffer.from(base64Data, 'base64');
+
+      // Set up the S3 upload parameters
+      const params = {
+          Bucket: 'bioniccrayonbucket',       // S3 Bucket name
+          Key: objectName,          // Name of the file in the bucket
+          Body: buffer,      // Image content (binary data)
+          ContentType: 'image/png' // Dynamically set the content type from the response headers
+      };
+
+      // Upload the image to S3
+      const uploadResult = await s3.upload(params).promise();
+
+        // Return the location (URL) of the uploaded image
+        return uploadResult.Location;
+
+  } catch (error) {
+      console.error('Error downloading or uploading the image:', error);
+  }
+}
+
 
 
 
@@ -155,7 +186,78 @@ router.post("/Prompt", async (req, res) => {
       Prompt = schemas.Entry(params)
       Prompt.save()
       res.send(JSON.stringify(params))
-    } else {
+    }
+    else if (req.body.model === "gpt-image-1")  {
+        console.log("gpt-image-1 subroutine")
+        const channel = client.channels.cache.get("1103168663617556571")
+  
+        await channel.send({
+          content: req.body.userInput})
+  
+  
+  
+        const response = await openai.images.generate({
+          model: "gpt-image-1",
+          prompt: req.body.userInput,
+          n: 1,
+          size: "1024x1024",
+          output_format:'png',
+          quality:'medium',
+          moderation:'low',
+          // background:'transparent'
+        });
+        console.log(response)
+        rawdata = response.data[0].b64_json;
+        // url = response.data[0].url;
+        
+        // imageStream = response.data[0]
+  
+        // var imageStream = Buffer.from(url, "base64");
+  
+
+
+  
+        disc_upload_message = await channel.send({
+          content: req.body.userInput +" ",
+  
+        })
+  
+        s3_url = await uploadImageFromB64ToS3(rawdata, disc_upload_message.id);
+
+        
+  
+      
+  
+  
+        console.log(s3_url)
+  
+  
+  
+  
+  
+  
+        var params = {
+          username: "someuser",
+          image_url:  s3_url,
+          image_message_id: disc_upload_message.id,
+          prompt: req.body.userInput+" gpt-image-1",
+          type: "Upscale",
+          //  alternate type name'Dalle 3',
+          time: response.created,
+        }
+  
+        console.log(params)
+  
+        Prompt = schemas.Entry(params)
+        Prompt.save()
+        res.send(JSON.stringify(params))
+
+
+
+
+
+    }
+    else {
       console.log("Midjourney subroutine")
 
       console.log(req.body)
