@@ -384,7 +384,18 @@ router.post("/Prompt", async (req, res) => {
 
     }
   } catch (error) {
-    console.error("Error in discordbot image:", error)
+    console.log("Error in /prompt endpoint image: WOWOWOWOOWOWO")
+    console.log(error.code)
+    if (error.code ==='moderation_blocked') {
+      console.log("Moderation blocked the request")
+    params = {
+      error_code: 400,
+      error_message: "Your request was rejected as a result of OpenAi's safety system. Your request may contain content that is not allowed.",
+      // error: error,
+    }}
+
+    res.send(JSON.stringify(params))
+    console.error("Error in /prompt endpoint image:", error)
   }
 })
 
