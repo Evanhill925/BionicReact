@@ -129,16 +129,24 @@ router.post("/Prompt", async (req, res) => {
   console.log(req.body)
   // console.log(discord.channel)
   try {
+    let response;
+    let channel;
+    let disc_upload_message;
+    let s3_url;
+
+
+
+
     if (req.body.model === "Dalle 3") {
       console.log("Dalle 3 subroutine")
-      const channel = client.channels.cache.get("1103168663617556571")
+      channel = client.channels.cache.get("1103168663617556571")
 
       // await channel.send({
       //   content: req.body.userInput})
 
 
 
-      const response = await openai.images.generate({
+      response = await openai.images.generate({
         model: "dall-e-3",
         prompt: req.body.userInput,
         n: 1,
@@ -189,12 +197,44 @@ router.post("/Prompt", async (req, res) => {
       res.send(JSON.stringify(params))
     }
     else if (req.body.model === "gpt-image-1")  {
-        console.log("gpt-image-1 subroutine")
-        const channel = client.channels.cache.get("1103168663617556571")
+        if (req.body.imageData){
+
+          function dataURLtoFile(dataurl, filename) {
+            var arr = dataurl.split(','),
+                mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[arr.length - 1]), 
+                n = bstr.length, 
+                u8arr = new Uint8Array(n);
+            while(n--){
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new File([u8arr], filename, {type:mime});
+        }
+
+
+
+          console.log("gpt-image-1 subroutine with image")
+
+          response = await openai.images.edit({
+            model: "gpt-image-1",
+            prompt: req.body.userInput,
+            size: "1024x1024",
+            output_format:'png',
+
+            quality:'medium',
+            moderation:'low',
+            image: dataURLtoFile(req.body.imageData,'dog')
+            // background:'transparent'
+          });
+
+        }
+        else {
+          console.log("gpt-image-1 subroutine without image")
+       
   
   
   
-        const response = await openai.images.generate({
+        response = await openai.images.generate({
           model: "gpt-image-1",
           prompt: req.body.userInput,
           n: 1,
@@ -204,6 +244,9 @@ router.post("/Prompt", async (req, res) => {
           moderation:'low',
           // background:'transparent'
         });
+      }
+
+
         console.log(response)
         rawdata = response.data[0].b64_json;
         // url = response.data[0].url;
@@ -211,6 +254,7 @@ router.post("/Prompt", async (req, res) => {
         // imageStream = response.data[0]
   
         // var imageStream = Buffer.from(url, "base64");
+        channel = client.channels.cache.get("1103168663617556571")
   
 
 
@@ -254,6 +298,7 @@ router.post("/Prompt", async (req, res) => {
         Prompt = schemas.Entry(params)
         Prompt.save()
         res.send(JSON.stringify(params))
+      
 
 
 
