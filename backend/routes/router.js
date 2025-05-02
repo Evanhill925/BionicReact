@@ -126,6 +126,7 @@ router.post("/Prompt", async (req, res) => {
   // response.render("index.ejs", {image_url:"https://media.discordapp.net/attachments/1103168663617556571/1116864121149849690/lilhelper_fox_man_hunted_webcam_99eba765-c8f8-4270-aee4-0f1dc0519c5e.png?width=559&height=559"})
   // console.log(adasdasdasd)()
   console.log("Prompt route fired")
+  console.log(req.body)
   // console.log(discord.channel)
   try {
     if (req.body.model === "Dalle 3") {
