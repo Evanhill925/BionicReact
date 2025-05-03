@@ -244,21 +244,25 @@ function Homepage({ defaultImage }) {
 
   // Check if GPT Image is selected
   const isGptImageSelected = selectedOption === 'gpt-image-1';
-
+  
   useEffect(() => {
-    // Set initial state from defaultImage prop
-    if (defaultImage) {
+    // Set initial state from defaultImage prop only if we don't have an image already
+    // and we don't have an uploaded image
+    if (defaultImage && !imageURL && !uploadedImage) {
       setImageURL(defaultImage.image_url);
       setImageID(defaultImage.image_message_id);
       setImageType(defaultImage.type);
     }
     
-    // Clear imageURL if an image is uploaded (to show the uploaded image instead)
+    // If we have an uploaded image, clear any default or previously generated image
     if (uploadedImage) {
       setImageURL('');
     }
-  }, [defaultImage, uploadedImage]);
+  }, [defaultImage, imageURL, uploadedImage]);
 
+
+
+  
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
   };
@@ -287,6 +291,8 @@ function Homepage({ defaultImage }) {
   // Function to trigger file input click
   const triggerFileInput = () => {
     fileInputRef.current.click();
+    // Set loading to false to ensure any previous loading state is cleared
+    setLoading(false);
   };
 
   const handleFetchImage = async () => {
@@ -303,24 +309,31 @@ function Homepage({ defaultImage }) {
           userInput: prompt,
           model: selectedOption ? selectedOption : ' --v 6.1',
           // Only include image data if GPT Image is selected and an image is uploaded
-          ...(isGptImageSelected && uploadedImage && { imageData: uploadedImage }) 
+          ...(isGptImageSelected && uploadedImage && { imageData: uploadedImage })
         }),
       };
 
       const res = await fetch(`${uriPath}/Prompt`, requestOptions);
       const data = await res.json();
 
+      // Always log the response to help with debugging
+      console.log("API response:", data);
+      
+      // Update all state variables in a single batch
+      // This ensures React processes the state changes correctly
       setImageID(data.image_message_id);
       setImageURL(data.image_url);
       setImagePrompt(data.prompt);
       setImageType(data.type);
+      setUploadedImage(null); // Clear uploaded image after setting the new URL
       window.history.pushState(null, '', `?image=${data.image_message_id}`);
       
-      // Clear the uploaded image only after a successful generation
-      setUploadedImage(null);
+      // Log to confirm the URL was set properly
+      console.log("Set imageURL to:", data.image_url);
     } catch (error) {
       console.error('Error fetching image:', error);
     } finally {
+       // We've already cleared uploadedImage before setting the new imageURL
       setPrompt('');
       setLoading(false);
       console.timeEnd('ImageCreatedTimer');
@@ -356,6 +369,8 @@ function Homepage({ defaultImage }) {
       console.error('Error fetching image:', error);
     } finally {
       setLoading(false);
+      // Clear uploaded image
+      setUploadedImage(null);
       console.timeEnd('ImageCreatedTimer');
     }
   };
@@ -448,9 +463,9 @@ function Homepage({ defaultImage }) {
           <img src={loadingPic} alt="Loading" className="img-fluid" style={{ maxHeight: '100px' }} />
         </div>
       ) : (
-        (imageURL || uploadedImage) && (
-          <Card 
-            className={`border-0 mb-5 mx-auto ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`} 
+        (imageURL || uploadedImage || (defaultImage && defaultImage.image_url)) && (
+          <Card
+            className={`border-0 mb-5 mx-auto ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}
             style={{ maxWidth: '800px' }}
           >
             {/* Image prompt title or uploaded image indicator */}
@@ -464,27 +479,40 @@ function Homepage({ defaultImage }) {
             
             {/* Image display - shows either uploaded image or generated image */}
             <Card.Body className="p-0 d-flex justify-content-center">
-              {uploadedImage && !imageURL ? (
+              {uploadedImage ? (
+                /* Show uploaded image */
                 <Card.Img
                   src={uploadedImage}
                   alt="Uploaded image"
                   className="img-fluid rounded shadow"
                   style={{ maxHeight: '80vh' }}
                 />
-              ) : (
+              ) : imageURL ? (
+                /* Show generated/API image */
                 <a href={imageURL} target="_blank" rel="noopener noreferrer">
                   <Card.Img
+                    key={Date.now() + imageURL} /* Add timestamp to key to force re-render */
                     src={imageURL}
                     alt="Generated image"
                     className="img-fluid rounded shadow"
                     style={{ maxHeight: '80vh' }}
                   />
                 </a>
-              )}
+              ) : defaultImage && defaultImage.image_url ? (
+                /* Show default image as fallback */
+                <a href={defaultImage.image_url} target="_blank" rel="noopener noreferrer">
+                  <Card.Img
+                    src={defaultImage.image_url}
+                    alt="Default image"
+                    className="img-fluid rounded shadow"
+                    style={{ maxHeight: '80vh' }}
+                  />
+                </a>
+              ) : null}
             </Card.Body>
             
-            {/* Action buttons - only show for generated images, not uploaded ones */}
-            {![null, "Upscale"].includes(imageType) && imageURL && !uploadedImage && (
+            {/* Action buttons - only show for generated images with valid type */}
+            {![null, "Upscale"].includes(imageType) && imageURL && (
               <Card.Footer className={`border-0 text-center py-3 ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
                 <ButtonGroup className="flex-wrap">
                   {buttonLabels.map((label) => {
