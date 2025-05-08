@@ -1,4 +1,4 @@
-// import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect, useRef } from 'react';
 // import { Container, Row, Col, Form, Button, Card, Spinner, ButtonGroup } from 'react-bootstrap';
 // import { useTheme } from '../ThemeContext';
 // import loadingPic from '../loader.svg';
@@ -11,31 +11,71 @@
 //   const [imageType, setImageType] = useState('');
 //   const [selectedOption, setSelectedOption] = useState('');
 //   const [loading, setLoading] = useState(false);
+//   const [uploadedImage, setUploadedImage] = useState(null);
+//   const fileInputRef = useRef(null);
 //   const { theme } = useTheme();
+//   const [error, setError] = useState(null);
   
 //   const uriPath = import.meta.env.VITE_uriPath;
 
+//   // Check if GPT Image is selected
+//   const isGptImageSelected = selectedOption === 'gpt-image-1';
+  
 //   useEffect(() => {
-//     // Set initial state from defaultImage prop
-//     if (defaultImage) {
+//     // Set initial state from defaultImage prop only if we don't have an image already
+//     // and we don't have an uploaded image
+//     if (defaultImage && !imageURL && !uploadedImage) {
 //       setImageURL(defaultImage.image_url);
 //       setImageID(defaultImage.image_message_id);
 //       setImageType(defaultImage.type);
 //     }
-//   }, [defaultImage]);
+    
+//     // If we have an uploaded image, clear any default or previously generated image
+//     if (uploadedImage) {
+//       setImageURL('');
+//     }
+//   }, [defaultImage, imageURL, uploadedImage]);
 
+
+
+  
 //   const handlePromptChange = (e) => {
 //     setPrompt(e.target.value);
 //   };
 
 //   const handleOptionSelect = (option) => {
 //     setSelectedOption(option);
+    
+//     // Clear uploaded image if switching away from GPT Image
+//     if (option !== 'gpt-image-1' && uploadedImage) {
+//       setUploadedImage(null);
+//     }
+//   };
+
+//   // Handle file uploads
+//   const handleFileUpload = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onload = (e) => {
+//         setUploadedImage(e.target.result);
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   // Function to trigger file input click
+//   const triggerFileInput = () => {
+//     fileInputRef.current.click();
+//     // Set loading to false to ensure any previous loading state is cleared
+//     setLoading(false);
 //   };
 
 //   const handleFetchImage = async () => {
-//     if (loading || !prompt.trim()) return;
+//     if (loading || (!prompt.trim() && !uploadedImage)) return;
     
 //     setLoading(true);
+//     setError(null);
 //     console.time('ImageCreatedTimer');
     
 //     try {
@@ -44,21 +84,33 @@
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify({
 //           userInput: prompt,
-//           model: selectedOption ? selectedOption : ' --v 6.1'
+//           model: selectedOption ? selectedOption : ' --v 6.1',
+//           // Only include image data if GPT Image is selected and an image is uploaded
+//           ...(isGptImageSelected && uploadedImage && { imageData: uploadedImage })
 //         }),
 //       };
 
 //       const res = await fetch(`${uriPath}/Prompt`, requestOptions);
 //       const data = await res.json();
 
+//       // Always log the response to help with debugging
+//       console.log("API response:", data);
+      
+//       // Update all state variables in a single batch
+//       // This ensures React processes the state changes correctly
 //       setImageID(data.image_message_id);
 //       setImageURL(data.image_url);
-//       setImagePrompt(data.prompt.replace('with a small goblin lurking in the background', ''));
+//       setImagePrompt(data.prompt);
 //       setImageType(data.type);
+//       setUploadedImage(null); // Clear uploaded image after setting the new URL
 //       window.history.pushState(null, '', `?image=${data.image_message_id}`);
+      
+//       // Log to confirm the URL was set properly
+//       console.log("Set imageURL to:", data.image_url);
 //     } catch (error) {
 //       console.error('Error fetching image:', error);
 //     } finally {
+//        // We've already cleared uploadedImage before setting the new imageURL
 //       setPrompt('');
 //       setLoading(false);
 //       console.timeEnd('ImageCreatedTimer');
@@ -94,6 +146,8 @@
 //       console.error('Error fetching image:', error);
 //     } finally {
 //       setLoading(false);
+//       // Clear uploaded image
+//       setUploadedImage(null);
 //       console.timeEnd('ImageCreatedTimer');
 //     }
 //   };
@@ -107,7 +161,16 @@
 //         <Col md={10} lg={8}>
 //           <h1 className="text-center mb-4">Enter a prompt to create an image</h1>
           
-//           {/* Prompt input and submit button */}
+//           {/* Hidden file input for image upload */}
+//           <input 
+//             type="file" 
+//             ref={fileInputRef}
+//             onChange={handleFileUpload}
+//             accept="image/*"
+//             style={{ display: 'none' }}
+//           />
+          
+//           {/* Prompt input, camera icon (conditionally), and submit button */}
 //           <Form onSubmit={(e) => { e.preventDefault(); handleFetchImage(); }}>
 //             <Form.Group className="mb-3">
 //               <Form.Label visuallyHidden>Image Prompt</Form.Label>
@@ -119,6 +182,19 @@
 //                   onChange={handlePromptChange}
 //                   className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
 //                 />
+                
+//                 {/* Camera icon button - only show when GPT Image is selected */}
+//                 {isGptImageSelected && (
+//                   <Button 
+//                     onClick={triggerFileInput}
+//                     variant={theme === 'dark' ? 'light' : 'dark'}
+//                     className="px-3"
+//                     title="Upload an image"
+//                   >
+//                     <span style={{ fontSize: '1.2rem' }}>📷</span>
+//                   </Button>
+//                 )}
+                
 //                 <Button 
 //                   onClick={handleFetchImage}
 //                   variant={theme === 'dark' ? 'light' : 'dark'}
@@ -145,20 +221,18 @@
 //               onChange={(e) => handleOptionSelect(e.target.value)}
 //               style={{ maxWidth: '300px' }}
 //               className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
+//               value={selectedOption}
 //             >
-//            <option value="">Midjourney (recommended)</option>
-//            <option value="gpt-image-1">GPT Image</option>
-//            <option value=" --niji 6">niji </option>
-//            <option value="Dalle 3">Dalle 3</option> 
+//               <option value="">Midjourney (recommended)</option>
+//               <option value="gpt-image-1">GPT Image</option>
+//               <option value=" --niji 6">niji </option>
+//               <option value="Dalle 3">Dalle 3</option> 
 //             </Form.Select>
 //           </div>
+          
+//           {/* Show a note about image upload when GPT Image is selected */}
 //         </Col>
 //       </Row>
-
-
-      
-
-
 
 //       {/* Loading indicator or image display */}
 //       {loading ? (
@@ -166,32 +240,56 @@
 //           <img src={loadingPic} alt="Loading" className="img-fluid" style={{ maxHeight: '100px' }} />
 //         </div>
 //       ) : (
-//         imageURL && (
-//           <Card 
-//             className={`border-0 mb-5 mx-auto ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`} 
+//         (imageURL || uploadedImage || (defaultImage && defaultImage.image_url)) && (
+//           <Card
+//             className={`border-0 mb-5 mx-auto ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}
 //             style={{ maxWidth: '800px' }}
 //           >
-//             {/* Image prompt title */}
-//             {(imagePrompt || defaultImage.prompt) && (
-//               <Card.Header className={`text-center border-0 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-light'}`}>
-//                 <h4>{imagePrompt || defaultImage.prompt}</h4>
-//               </Card.Header>
-//             )}
+//             {/* Image prompt title or uploaded image indicator */}
+//             <Card.Header className={`text-center border-0 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-light'}`}>
+//               {uploadedImage && !imageURL ? (
+//                 <h4>Uploaded Image</h4>
+//               ) : (
+//                 <h4>{imagePrompt || (defaultImage && defaultImage.prompt)}</h4>
+//               )}
+//             </Card.Header>
             
-//             {/* Image display */}
+//             {/* Image display - shows either uploaded image or generated image */}
 //             <Card.Body className="p-0 d-flex justify-content-center">
-//               <a href={imageURL} target="_blank" rel="noopener noreferrer">
+//               {uploadedImage ? (
+//                 /* Show uploaded image */
 //                 <Card.Img
-//                   src={imageURL}
-//                   alt="Generated image"
+//                   src={uploadedImage}
+//                   alt="Uploaded image"
 //                   className="img-fluid rounded shadow"
 //                   style={{ maxHeight: '80vh' }}
 //                 />
-//               </a>
+//               ) : imageURL ? (
+//                 /* Show generated/API image */
+//                 <a href={imageURL} target="_blank" rel="noopener noreferrer">
+//                   <Card.Img
+//                     key={Date.now() + imageURL} /* Add timestamp to key to force re-render */
+//                     src={imageURL}
+//                     alt="Generated image"
+//                     className="img-fluid rounded shadow"
+//                     style={{ maxHeight: '80vh' }}
+//                   />
+//                 </a>
+//               ) : defaultImage && defaultImage.image_url ? (
+//                 /* Show default image as fallback */
+//                 <a href={defaultImage.image_url} target="_blank" rel="noopener noreferrer">
+//                   <Card.Img
+//                     src={defaultImage.image_url}
+//                     alt="Default image"
+//                     className="img-fluid rounded shadow"
+//                     style={{ maxHeight: '80vh' }}
+//                   />
+//                 </a>
+//               ) : null}
 //             </Card.Body>
             
-//             {/* Action buttons */}
-//             {![null, "Upscale"].includes(imageType) && (
+//             {/* Action buttons - only show for generated images with valid type */}
+//             {![null, "Upscale"].includes(imageType) && imageURL && (
 //               <Card.Footer className={`border-0 text-center py-3 ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
 //                 <ButtonGroup className="flex-wrap">
 //                   {buttonLabels.map((label) => {
@@ -223,13 +321,15 @@
 
 // export default Homepage;
 
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Form, Button, Card, Spinner, ButtonGroup } from 'react-bootstrap';
 import { useTheme } from '../ThemeContext';
 import loadingPic from '../loader.svg';
+import ErrorMessage from './ErrorMessage'; // Import the ErrorMessage component
 
 function Homepage({ defaultImage }) {
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState(null);
   const [imageURL, setImageURL] = useState('');
   const [imageID, setImageID] = useState('');
   const [imagePrompt, setImagePrompt] = useState('');
@@ -239,12 +339,19 @@ function Homepage({ defaultImage }) {
   const [uploadedImage, setUploadedImage] = useState(null);
   const fileInputRef = useRef(null);
   const { theme } = useTheme();
+  const [error, setError] = useState(null);
   
   const uriPath = import.meta.env.VITE_uriPath;
 
   // Check if GPT Image is selected
   const isGptImageSelected = selectedOption === 'gpt-image-1';
   
+  useEffect(() => {
+    if (error) {
+      console.log("Error state updated:", error.message);
+    }
+  }, [error]);
+
   useEffect(() => {
     // Set initial state from defaultImage prop only if we don't have an image already
     // and we don't have an uploaded image
@@ -260,9 +367,6 @@ function Homepage({ defaultImage }) {
     }
   }, [defaultImage, imageURL, uploadedImage]);
 
-
-
-  
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
   };
@@ -274,15 +378,33 @@ function Homepage({ defaultImage }) {
     if (option !== 'gpt-image-1' && uploadedImage) {
       setUploadedImage(null);
     }
+    
+    // Clear any existing errors when changing options
+    setError(null);
   };
 
   // Handle file uploads
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        setError({
+          message: 'File size too large. Please upload an image smaller than 10MB.'
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         setUploadedImage(e.target.result);
+        // Clear any existing errors
+        setError(null);
+      };
+      reader.onerror = () => {
+        setError({
+          message: 'Failed to read the uploaded file. Please try another image.'
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -295,10 +417,18 @@ function Homepage({ defaultImage }) {
     setLoading(false);
   };
 
+  
+
   const handleFetchImage = async () => {
-    if (loading || (!prompt.trim() && !uploadedImage)) return;
-    
+    // Validate input
+    if (loading) return;
+
+  if (!prompt && !uploadedImage) {
+    setError({ message: 'Please enter a prompt or upload an image.' })
+    return;
+  }
     setLoading(true);
+    setError(null);
     console.time('ImageCreatedTimer');
     
     try {
@@ -314,10 +444,29 @@ function Homepage({ defaultImage }) {
       };
 
       const res = await fetch(`${uriPath}/Prompt`, requestOptions);
+      
+      // Handle non-2xx responses
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw {
+          status: res.status,
+          message: errorData.message || `Server error: ${res.status}`,
+          details: errorData
+        };
+      }
+      
       const data = await res.json();
 
       // Always log the response to help with debugging
       console.log("API response:", data);
+      
+      // Check if the response contains required data
+      // if (!data.image_url) {
+      //   throw {
+      //     message: 'Invalid response from server. Missing image URL.',
+      //     details: data
+      //   };
+      // }
       
       // Update all state variables in a single batch
       // This ensures React processes the state changes correctly
@@ -330,11 +479,13 @@ function Homepage({ defaultImage }) {
       
       // Log to confirm the URL was set properly
       console.log("Set imageURL to:", data.image_url);
+      
+      // Clear prompt after successful generation
+      setPrompt('');
     } catch (error) {
       console.error('Error fetching image:', error);
+      setError(error);
     } finally {
-       // We've already cleared uploadedImage before setting the new imageURL
-      setPrompt('');
       setLoading(false);
       console.timeEnd('ImageCreatedTimer');
     }
@@ -344,6 +495,7 @@ function Homepage({ defaultImage }) {
     if (loading) return;
     
     setLoading(true);
+    setError(null);
     console.time('ImageCreatedTimer');
     
     try {
@@ -360,13 +512,33 @@ function Homepage({ defaultImage }) {
       };
 
       const res = await fetch(`${uriPath}/Button`, requestOptions);
+      
+      // Handle non-2xx responses
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw {
+          status: res.status,
+          message: errorData.message || `Server error: ${res.status}`,
+          details: errorData
+        };
+      }
+      
       const data = await res.json();
+      
+      // Validate response data
+      if (!data.image_url) {
+        throw {
+          message: 'Invalid response from server. Missing image URL.',
+          details: data
+        };
+      }
       
       setImageID(data.image_message_id);
       setImageURL(data.image_url);
       setImageType(data.type);
     } catch (error) {
       console.error('Error fetching image:', error);
+      setError(error);
     } finally {
       setLoading(false);
       // Clear uploaded image
@@ -453,7 +625,19 @@ function Homepage({ defaultImage }) {
             </Form.Select>
           </div>
           
-          {/* Show a note about image upload when GPT Image is selected */}
+          {/* Show GPT Image info when selected */}
+          {isGptImageSelected && (
+            <div className="text-center mb-3 small">
+              <p>Upload an image to use as a reference or modify with your prompt</p>
+            </div>
+          )}
+          
+          {/* Error Message Component */}
+          <ErrorMessage 
+            error={error} 
+            className={`mb-4 ${theme === 'dark' ? 'error-dark' : ''}`}
+            showDetails={false}
+          />
         </Col>
       </Row>
 
@@ -496,6 +680,11 @@ function Homepage({ defaultImage }) {
                     alt="Generated image"
                     className="img-fluid rounded shadow"
                     style={{ maxHeight: '80vh' }}
+                    onError={() => {
+                      setError({
+                        message: "Failed to load the generated image. The server might be busy or the image URL is invalid.",
+                      });
+                    }}
                   />
                 </a>
               ) : defaultImage && defaultImage.image_url ? (
@@ -506,6 +695,11 @@ function Homepage({ defaultImage }) {
                     alt="Default image"
                     className="img-fluid rounded shadow"
                     style={{ maxHeight: '80vh' }}
+                    onError={() => {
+                      setError({
+                        message: "Failed to load the default image.",
+                      });
+                    }}
                   />
                 </a>
               ) : null}

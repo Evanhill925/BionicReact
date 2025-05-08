@@ -118,7 +118,6 @@ router.get("/image/:imageID", async (req, res) => {
     .exec()
   if (image_for_display) {
     res.send(JSON.stringify(image_for_display))
-    console.log("THIS IS THE IMAGE CLICK ROUTE")
   }
 })
 
@@ -383,21 +382,54 @@ router.post("/Prompt", async (req, res) => {
         
 
     }
-  } catch (error) {
-    console.log("Error in /prompt endpoint image: WOWOWOWOOWOWO")
-    console.log(error.code)
-    if (error.code ==='moderation_blocked') {
-      console.log("Moderation blocked the request")
+  // } catch (error) {
+  //   console.log("Error in /prompt endpoint image: WOWOWOWOOWOWO")
+  //   console.log(error.code)
+  //   if (error.code ==='moderation_blocked') {
+  //     console.log("Moderation blocked the request")
+  //   params = {
+  //     error_code: 400,
+  //     error_message: "Your request was rejected as a result of OpenAi's safety system. Your request may contain content that is not allowed.",
+  //     // error: error,
+  //   }}
+
+  //   res.send(JSON.stringify(params))
+  //   console.error("Error in /prompt endpoint image:", error)
+  // }
+} catch (error) {
+  console.log("Error in /prompt endpoint image: WOWOWOWOOWOWO")
+  console.log(error.code)
+
+  let params = {} // <-- always define this
+
+  if (error.code === 'moderation_blocked') {
+    console.log("Moderation blocked the request")
     params = {
       error_code: 400,
-      error_message: "Your request was rejected as a result of OpenAi's safety system. Your request may contain content that is not allowed.",
-      // error: error,
-    }}
-
-    res.send(JSON.stringify(params))
-    console.error("Error in /prompt endpoint image:", error)
+      error_message: "blocked_request",
+    }
+  } else if (error.code === 'billing_hard_limit_reached') {
+    console.log("Billing hard limit reached")
+    params = {
+      error_code: 402,
+      error_message: "no_tokens",
+    }
+  } else {
+    params = {
+      error_code: 500,
+      error_message: "An unexpected error occurred",
+    }
   }
+
+  console.error("Error in /prompt endpoint image:", error)
+  res.status(params.error_code).json({
+    message: params.error_message,
+    code: params.error_code
+  })
+}
+
 })
+
 
 router.post("/Button", async (request, res) => {
   const entry = schemas.Entry
