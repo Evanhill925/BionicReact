@@ -27,25 +27,8 @@ const ErrorMessage = ({
     if (error.code === 'ERR_UNHANDLED_REJECTION' || error.code === 'TIMEOUT_ERROR') {
       return 'The request timed out. Your prompt may contain content that cannot be processed.';
     }
-    
-    if (error.status === 400) {
-      return 'Please check your input and try again.';
-    }
-    
-    if (error.status === 429) {
-      return 'Too many requests. Please wait a moment before trying again.';
-    }
-
-    if (error.status === 403) {
-      return 'Access denied. Your prompt may contain restricted content.';
-    }
-    
-    if (error.status >= 500) {
-      return 'Server error. The image generation service may be experiencing issues.';
-    }
-     
-     //midjourney error for no tokens
-     if(error.message === 'no_tokens' ){
+      //midjourney error for no tokens
+      if(error.message === 'no_tokens' ){
       return 'This image generator is currently not available. Please choose an different drop down selection'
     }
 
@@ -62,6 +45,21 @@ const ErrorMessage = ({
     // fallback message if JSON is not properly sent from backend
     if (error.message === 'Unexpected end of JSON input') {
       return 'There was an issue processing the server response. Please try again later.';
+    }
+    if (error.status === 400) {
+      return 'Please check your input and try again.';
+    }
+    
+    if (error.status === 429) {
+      return 'Too many requests. Please wait a moment before trying again.';
+    }
+
+    if (error.status === 403) {
+      return 'Access denied. Your prompt may contain restricted content.';
+    }
+    
+    if (error.status >= 500) {
+      return 'Server error. The image generation service may be experiencing issues.';
     }
 
     //generic error message if no code exists
