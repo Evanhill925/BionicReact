@@ -38,6 +38,14 @@ const ErrorMessage = ({
     }
 
     //message created by if statement in homepage component
+    if (error.message ===  'File size too large. Please upload an image smaller than 10MB.') {
+      return 'Image is too large.';
+    }
+
+    if (error.message ===  'Failed to read the uploaded file. Please try another image.') {
+      return 'Cannot process image.';
+    }
+    
     if (error.message ===  'Please enter a prompt or upload an image.') {
       return 'Please enter a prompt or upload an image.';
     }
