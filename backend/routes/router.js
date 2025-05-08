@@ -318,16 +318,40 @@ router.post("/Prompt", async (req, res) => {
       channel.send(a)
       var midjourneyparams= {}
 
-      const filter = (m) =>
-        m.content.startsWith(`**${a}`) &&
-        m.attachments.size == 1 &&
-        m.author.id == "936929561302675456"
+      const filter = (m) => {
+        if (m.content.startsWith(`**${a}`) && m.attachments.size == 1 && m.author.id == "936929561302675456") return true;
+        try {
+        if (m.embeds[0].footer.text.includes(`${a}`) && m.author.id == "936929561302675456") return 'dogwater';
+        }
+        catch (error) {
+          
+        }
+
+      }
+        // m.content.startsWith(`**${a}`) &&
+        // m.attachments.size == 1 &&
+        // m.author.id == "936929561302675456"
       // Errors: ['time'] treats ending because of the time limit as an error
       var result = channel
         .awaitMessages({ filter, max: 1, time: 120_000, errors: ["time"] })
         //   .then(collected=> response.render(__dirname + "/index.ejs", {name:collected.first().attachments.first().url,message_id: collected.first().id}))
         .then((collected) => {
+          // console.log(collected.first())
 
+          if (collected.first().embeds.length > 0) {
+            if (collected.first().embeds[0].title == 'Banned prompt detected') {
+              console.log("banned content detected in midjourney route")
+              res.status(400).send(JSON.stringify({message: 'blocked_request'}))
+              return
+            }
+            if (collected.first().embeds[0].title == 'Credits exhausted') {
+              console.log("credits exhausted in midjourney route")
+              res.status(400).send(JSON.stringify({message: 'no_tokens'}))
+              return
+
+            }
+            
+          }
           let imageUrl = collected.first().attachments.first().url;
           const imageMessageId = collected.first().id;
           // function that checks if process.env.env is production or development
