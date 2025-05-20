@@ -19,6 +19,10 @@ export default function Pagination({ imagesPerPage, totalImages, paginate }) {
   const handlePageClick = (number) => {
     setActivePage(number);
     paginate(number);
+       const element = document.querySelector('.text-center.mb-4');
+                  if (element) {
+                    element.scrollIntoView({ behavior: "instant"});
+                  }
   };
 
   // Reset active page to 1 when total images changes

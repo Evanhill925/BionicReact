@@ -239,7 +239,7 @@ router.post("/Prompt", async (req, res) => {
           n: 1,
           size: "1024x1024",
           output_format:'png',
-          quality:'medium',
+          quality:'low',
           moderation:'low',
           // background:'transparent'
         });

@@ -5,6 +5,7 @@ import NavBar from "../components/NavBar";
 import ImageGrid from "../components/ImageGrid";
 import SearchForm from "../components/SearchForm";
 import Pagination from "../components/Pagination";
+import SEO from '../components/SEO';
 
 export function Gallery() {
   const [images, setImages] = useState([]);
@@ -57,6 +58,12 @@ export function Gallery() {
 
   return (
     <>
+     <SEO 
+            title="Gallery"
+            description="Discover stunning AI images created by users"
+            pathName="/gallery"
+            keywords="AI, image generation, machine learning, generative models, GPT, Dalle, gallery"
+          />
       <NavBar />
       
       <Container className={`py-4 ${theme === 'dark' ? 'text-light' : 'text-dark'}`} style={{ maxWidth: '1000px' }}>

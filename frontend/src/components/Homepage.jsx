@@ -327,6 +327,8 @@ import { Container, Row, Col, Form, Button, Card, Spinner, ButtonGroup } from 'r
 import { useTheme } from '../ThemeContext';
 import loadingPic from '../loader.svg';
 import ErrorMessage from './ErrorMessage'; // Import the ErrorMessage component
+import SEO from '../components/SEO';
+
 
 function Homepage({ defaultImage }) {
   const [prompt, setPrompt] = useState(null);
@@ -550,7 +552,18 @@ function Homepage({ defaultImage }) {
   // Button configurations
   const buttonLabels = ['U1', 'U2', 'U3', 'U4', '↻', 'V1', 'V2', 'V3', 'V4'];
 
+  // Determine the best image URL to use for SEO
+  const seoImageUrl = imageURL || (defaultImage && defaultImage.image_url) || null;
+  
   return (
+    <>
+    <SEO
+        title="Home"
+        image={seoImageUrl}
+        description="Generate stunning AI images using our state-of-the-art models"
+        pathName="/"
+        keywords="AI, image generation, machine learning, generative models, GPT, Dalle"
+      />
     <Container className={`py-4 ${theme === 'dark' ? 'text-light' : 'text-dark'}`} style={{ maxWidth: '1000px' }}>
       <Row className="justify-content-center mb-4">
         <Col md={10} lg={8}>
@@ -733,6 +746,7 @@ function Homepage({ defaultImage }) {
         )
       )}
     </Container>
+    </>
   );
 }
 
