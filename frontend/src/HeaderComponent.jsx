@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+// import { Helmet } from "react-helmet-async";
 
 function HelmetComponent({ imageDict }) {
     const [url, setUrl] = useState('');
@@ -20,6 +20,7 @@ function HelmetComponent({ imageDict }) {
 
     return (
         <>
+            {/* Temporarily commented out Helmet usage
             <Helmet>
                 <title>Bionic Crayons</title>
                 <meta name="description" content="Create free and fun images with AI! "/>
@@ -37,6 +38,7 @@ function HelmetComponent({ imageDict }) {
                 <meta name="twitter:description" content={desc}/>
                 <meta name="twitter:image" content={url}/>
             </Helmet>
+            */}
         </>
     );
 };
