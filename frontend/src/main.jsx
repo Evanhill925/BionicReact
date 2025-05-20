@@ -9,11 +9,11 @@ import "./custom-theme.css"
 import "./App.css"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <HelmetProvider>
-    <ThemeProvider>
+<React.StrictMode>
+  <ThemeProvider>
+  <HelmetProvider>
       <RouterProvider router={router} />
-    </ThemeProvider>
-    </HelmetProvider>
-  </React.StrictMode>
+  </HelmetProvider>
+   </ThemeProvider>
+</React.StrictMode>
 )
