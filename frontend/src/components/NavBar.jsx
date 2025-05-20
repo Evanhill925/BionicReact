@@ -88,7 +88,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { useTheme } from '../ThemeContext';
-import bionicLogo from '../bioniclogo.png';
+import bionicLogo from '../cray.png';
 
 export function NavBar({ state }) {
   const location = useLocation();
@@ -122,10 +122,11 @@ export function NavBar({ state }) {
           <img
             src={bionicLogo}
             alt="Bionic Crayons"
-            height="70"
+            height="80"
+            width="100"
             className="d-inline-block me-2"
             style={{
-              maxWidth: '300px',
+              // maxWidth: '500px',
               filter: theme === 'dark'
                 ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5)) brightness(1.1)'
                 : 'drop-shadow(0 0 4px rgba(0,0,0,0.4))',
