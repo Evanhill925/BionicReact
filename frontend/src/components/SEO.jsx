@@ -1,6 +1,6 @@
 // components/SEO.js
 import React from 'react';
-// import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types'; // For prop validation
 import logo from "../crlogo.png"
 
@@ -28,41 +28,42 @@ function SEO({
   const canonicalUrl = pathName ? `${siteUrl}${pathName}` : siteUrl;
   
   return (
-    // Temporarily commented out Helmet usage
-    <div>
-      {/*
-      <Helmet>
-        <title>{metaTitle}</title>
-        <meta name="description" content={metaDescription} />
-        {keywords && <meta name="keywords" content={keywords} />}
-        {author && <meta name="author" content={author} />}
-        
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={metaTitle} />
-        <meta property="og:description" content={metaDescription} />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:site_name" content={siteName} />
-        <meta property="og:image" content={metaImage} />
-        <meta property="og:image:alt" content={imageAlt || metaDescription} />
-        
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={metaTitle} />
-        <meta name="twitter:description" content={metaDescription} />
-        <meta name="twitter:image" content={metaImage} />
-        <meta name="twitter:image:alt" content={imageAlt || metaDescription} />
-        
-        {modelName && <meta name="image:model" content={modelName} />}
-        
-        <link rel="canonical" href={canonicalUrl} />
-        
-        {structuredData && (
-          <script type="application/ld+json">
-            {JSON.stringify(structuredData)}
-          </script>
-        )}
-      </Helmet>
-      */}
-    </div>
+    <Helmet>
+      {/* Basic Meta Tags */}
+      <title>{metaTitle}</title>
+      <meta name="description" content={metaDescription} />
+      {keywords && <meta name="keywords" content={keywords} />}
+      {author && <meta name="author" content={author} />}
+      
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={metaTitle} />
+      <meta property="og:description" content={metaDescription} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:image" content={metaImage} />
+      <meta property="og:image:alt" content={imageAlt || metaDescription} />
+      
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={metaTitle} />
+      <meta name="twitter:description" content={metaDescription} />
+      <meta name="twitter:image" content={metaImage} />
+      <meta name="twitter:image:alt" content={imageAlt || metaDescription} />
+      
+      {/* Image-specific meta tags */}
+      {modelName && <meta name="image:model" content={modelName} />}
+      
+      {/* Canonical URL */}
+      <link rel="canonical" href={canonicalUrl} />
+      
+      {/* Structured Data for SEO (optional) */}
+      {structuredData && (
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
+    </Helmet>
   );
 }
 
