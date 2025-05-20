@@ -17,7 +17,7 @@ function SEO({
 }) {
   // Default values and site constants
   const siteName = "Bionic Crayons";
-  const siteUrl = "https://bionic-crayons.com"; 
+  const siteUrl = "https://bionic-crayons.com";
   const defaultDescription = "Generate amazing images with AI models and APIs";
   const defaultImage = `${siteUrl}/${logo}`; // Your default preview image
   
@@ -26,6 +26,15 @@ function SEO({
   const metaDescription = description || defaultDescription;
   const metaImage = image || defaultImage;
   const canonicalUrl = pathName ? `${siteUrl}${pathName}` : siteUrl;
+  
+  // Log when SEO component updates - useful for debugging
+  React.useEffect(() => {
+    console.log('SEO component updated with:', {
+      title: metaTitle,
+      image: metaImage,
+      path: canonicalUrl
+    });
+  }, [metaTitle, metaImage, canonicalUrl]);
   
   return (
     <Helmet>

@@ -552,11 +552,14 @@ function Homepage({ defaultImage }) {
   // Button configurations
   const buttonLabels = ['U1', 'U2', 'U3', 'U4', '↻', 'V1', 'V2', 'V3', 'V4'];
 
+  // Determine the best image URL to use for SEO
+  const seoImageUrl = imageURL || (defaultImage && defaultImage.image_url) || null;
+  
   return (
     <>
-    <SEO 
+    <SEO
         title="Home"
-        image={imageURL}
+        image={seoImageUrl}
         description="Generate stunning AI images using our state-of-the-art models"
         pathName="/"
         keywords="AI, image generation, machine learning, generative models, GPT, Dalle"
