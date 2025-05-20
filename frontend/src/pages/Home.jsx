@@ -109,7 +109,7 @@ export function Home() {
         )}
       </Container>
 
-      <HelmetComponent imageDict={singleImage} />
+      {/* <HelmetComponent imageDict={singleImage} /> */}
     </>
   );
 }
