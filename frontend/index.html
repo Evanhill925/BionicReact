@@ -24,64 +24,7 @@
     <meta name="twitter:description" content="Generate amazing images with AI models and APIs" />
     <meta name="twitter:image" content="https://bionic-crayons.com/crlogo.png" />
     
-    <!-- Set environment variables for scripts -->
-    <script>
-      // Extract API URL from environment variables
-      window.ENV_API_URL = "%VITE_uriPath%";
-    </script>
-    
-    <!-- Early image URL extraction script -->
-    <script>
-      (function() {
-        try {
-          // Extract image ID from URL
-          const urlParams = new URLSearchParams(window.location.search);
-          const imageId = urlParams.get('image');
-          
-          if (imageId) {
-            // Get the API base URL from an environment variable or use a default
-            const apiBase = window.ENV_API_URL || 'https://bionic-crayons.com/api';
-            
-            // Fetch the image data from your API
-            fetch(`${apiBase}/image/${imageId}`)
-              .then(response => response.json())
-              .then(data => {
-                if (data && data.image_url) {
-                  // Update meta tags with the actual image URL
-                  document.querySelector('meta[property="og:image"]').setAttribute('content', data.image_url);
-                  document.querySelector('meta[name="twitter:image"]').setAttribute('content', data.image_url);
-                  
-                  // Update description if available
-                  if (data.prompt) {
-                    const description = `AI generated image: ${data.prompt}`;
-                    document.querySelector('meta[property="og:description"]').setAttribute('content', description);
-                    document.querySelector('meta[name="twitter:description"]').setAttribute('content', description);
-                  }
-                  
-                  // Update title to indicate specific image
-                  document.querySelector('meta[property="og:title"]').setAttribute('content', 'Bionic Crayons - View Generated Image');
-                  document.querySelector('meta[name="twitter:title"]').setAttribute('content', 'Bionic Crayons - View Generated Image');
-                  
-                  console.log('Meta tags updated with image data:', data.image_url);
-                }
-              })
-              .catch(error => {
-                console.error('Error fetching image data:', error);
-              });
-          }
-        } catch (e) {
-          console.error('Error in early image extraction:', e);
-        }
-      })();
-    </script>
-    
-    <!-- <style>
-      body {
-        background-image: url("https://cdn.discordapp.com/attachments/1103168663617556571/1151299323125043301/lilhelper_goblin_adb65be1-2b2d-4544-b74d-0558e344d3b9.png");
-        background-size: 200px; /* Adjust as needed */
-        background-repeat: repeat; /* Make the background image tile */
-      }
-    </style> -->
+  
   </head>
   <body>
     <div id="root"></div>
