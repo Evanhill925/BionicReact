@@ -4,7 +4,7 @@ import { useTheme } from "../ThemeContext";
 import NavBar from "../components/NavBar";
 import ImageGrid from "../components/ImageGrid";
 import Homepage from "../components/Homepage";
-import HelmetComponent from "../HeaderComponent";
+
 
 export function Home() {
   const [images, setImages] = useState([]);
@@ -108,8 +108,6 @@ export function Home() {
           </Alert>
         )}
       </Container>
-
-      {/* <HelmetComponent imageDict={singleImage} /> */}
     </>
   );
 }

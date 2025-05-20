@@ -556,7 +556,7 @@ function Homepage({ defaultImage }) {
     <>
     <SEO 
         title="Home"
-        image={{imageURL}}
+        image={imageURL}
         description="Generate stunning AI images using our state-of-the-art models"
         pathName="/"
         keywords="AI, image generation, machine learning, generative models, GPT, Dalle"
