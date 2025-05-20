@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 function HelmetComponent({ imageDict }) {
     const [url, setUrl] = useState('');
