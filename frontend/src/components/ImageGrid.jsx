@@ -1,9 +1,28 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { useTheme } from '../ThemeContext';
+  const uriPath = import.meta.env.VITE_uriPath;
 
 export default function ImageGrid({ images, gridClass }) {
   const { theme } = useTheme();
+
+  const handleDelete = async (imageId) => {
+  try {
+    const response = await fetch(`${uriPath}/image/${imageId}`, {
+      method: 'DELETE',
+    });
+    
+    if (response.ok) {
+      console.log('Image deleted successfully');
+      location.reload();
+    } else {
+      console.error('Failed to delete image');
+    }
+  } catch (error) {
+    console.error('Error deleting image:', error);
+  }
+};
+
   
   if (!Array.isArray(images) || images.length === 0) {
     return (
@@ -45,7 +64,9 @@ export default function ImageGrid({ images, gridClass }) {
                   </Card.Body>
                 )}
               </a>
+               <button onClick={() => handleDelete(image._id)}>Delete</button>
             </Card>
+           
           </Col>
         ))}
       </Row>

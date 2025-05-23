@@ -342,6 +342,7 @@ function Homepage({ defaultImage }) {
   const fileInputRef = useRef(null);
   const { theme } = useTheme();
   const [error, setError] = useState(null);
+  const [selectedQuality, setSelectedQuality] = useState("");
   
   const uriPath = import.meta.env.VITE_uriPath;
 
@@ -376,6 +377,7 @@ function Homepage({ defaultImage }) {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     
+    
     // Clear uploaded image if switching away from GPT Image
     if (option !== 'gpt-image-1' && uploadedImage) {
       setUploadedImage(null);
@@ -384,6 +386,11 @@ function Homepage({ defaultImage }) {
     // Clear any existing errors when changing options
     setError(null);
   };
+const handleQualitySelect = (option) => {
+    setSelectedQuality(option);
+}
+
+  
 
   // Handle file uploads
   const handleFileUpload = (e) => {
@@ -440,11 +447,12 @@ function Homepage({ defaultImage }) {
         body: JSON.stringify({
           userInput: prompt,
           model: selectedOption ? selectedOption : ' --v 6.1',
+          quality: selectedQuality,
           // Only include image data if GPT Image is selected and an image is uploaded
           ...(isGptImageSelected && uploadedImage && { imageData: uploadedImage })
         }),
       };
-
+    
       const res = await fetch(`${uriPath}/Prompt`, requestOptions);
       
       // Handle non-2xx responses
@@ -637,6 +645,19 @@ function Homepage({ defaultImage }) {
               <option value="Dalle 3">Dalle 3</option> 
             </Form.Select>
           </div>
+           {/* Dropdown for model selection */}
+            <div className="d-flex justify-content-center mb-4">
+            <Form.Select 
+              onChange={(e) => handleQualitySelect(e.target.value)}
+              style={{ maxWidth: '300px' }}
+              className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
+              value={selectedQuality}
+            >
+              <option value="low">low</option>
+              <option value="medium">Medium</option>
+              <option value="high">high</option> 
+            </Form.Select>
+          </div>
           
           {/* Show GPT Image info when selected */}
           {isGptImageSelected && (
@@ -749,5 +770,6 @@ function Homepage({ defaultImage }) {
     </>
   );
 }
+
 
 export default Homepage;

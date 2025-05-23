@@ -121,6 +121,33 @@ router.get("/image/:imageID", async (req, res) => {
   }
 })
 
+router.delete("/image/:imageId", async (req, res) => {
+  console.log("Delete route fired")
+  console.log(req.params.imageId)
+  try {
+    const entry = schemas.Entry;
+    
+    // Delete the image document from MongoDB
+    const deletedImage = await entry.findOneAndDelete({ 
+        _id: req.params.imageId 
+    }).exec();
+    
+    if (!deletedImage) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+    
+    res.status(200).json({ message: 'Image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ error: 'Failed to delete image' });
+  }
+});
+
+
+
+
+
+
 router.post("/Prompt", async (req, res) => {
   // response.render("index.ejs", {image_url:"https://media.discordapp.net/attachments/1103168663617556571/1116864121149849690/lilhelper_fox_man_hunted_webcam_99eba765-c8f8-4270-aee4-0f1dc0519c5e.png?width=559&height=559"})
   // console.log(adasdasdasd)()
@@ -220,7 +247,7 @@ router.post("/Prompt", async (req, res) => {
             size: "1024x1024",
             output_format:'png',
 
-            quality:'medium',
+            quality: req.body.quality || 'medium',
             moderation:'low',
             image: dataURLtoFile(req.body.imageData,'dog')
             // background:'transparent'
@@ -239,7 +266,7 @@ router.post("/Prompt", async (req, res) => {
           n: 1,
           size: "1024x1024",
           output_format:'png',
-          quality:'low',
+          quality: req.body.quality || 'medium',
           moderation:'low',
           // background:'transparent'
         });
