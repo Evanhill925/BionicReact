@@ -378,6 +378,30 @@ router.post("/Prompt", async (req, res) => {
             return process.env.env === 'production';
           }
 
+
+          if (req.body.imageData){
+            const midjourneyJobId = imageUrl.split('_').pop().split('.webp')[0];
+
+            midjourneyparams = {
+            username: "someuser",
+            image_url: imageUrl,
+            image_message_id: collected.first().id,
+            prompt: a,
+            type: "Original",
+            time: collected.first().createdTimestamp,
+            local_file_path: localFilePath
+
+
+            
+          }
+
+
+
+
+
+
+          }
+
           if (isProduction()) {
             localFilePath = `../images/${imageMessageId}.png`;
             imageUrl = `https://bionic-crayons.com/images/${imageMessageId}.png`;
