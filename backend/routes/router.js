@@ -306,15 +306,34 @@ router.post("/Prompt", async (req, res) => {
     }
     else {
       console.log("Midjourney subroutine")
-
       console.log(req.body)
+
+      if (req.body.imageData){
+
+      disc_upload_message = await channel.send({
+          content: req.body.userInput,
+  
+        })
+      s3_url = await uploadImageFromB64ToS3(req.body.imageData, disc_upload_message.id);
+
+
+      let a =s3_url +" "+ req.body.userInput.trim() + req.body.model
+
+      }
+    else{
       let a = req.body.userInput.trim() + req.body.model
+    }
+
+      
+      // let a = req.body.userInput.trim() + req.body.model
 
       const channel = client.channels.cache.get("1103168663617556571")
       // console.log(channel)
       console.log(a)
       channel.sendSlash("936929561302675456", "imagine", a)
       channel.send(a)
+
+      let a = req.body.userInput.trim() + req.body.model
       var midjourneyparams= {}
 
       const filter = (m) => {
