@@ -339,15 +339,20 @@ function Homepage({ defaultImage }) {
   const [selectedOption, setSelectedOption] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null); // Store the actual File object
+  const [imageToURL, setImageToURL] = useState(null); // Store the object URL
   const fileInputRef = useRef(null);
   const { theme } = useTheme();
   const [error, setError] = useState(null);
-  
+  const [selectedQuality, setSelectedQuality] = useState(); // Default to medium quality
   const uriPath = import.meta.env.VITE_uriPath;
 
   // Check if GPT Image is selected
   const isGptImageSelected = selectedOption === 'gpt-image-1';
-  
+  const isMidVideoImageSelected = selectedOption === " --video"
+
+
+
   useEffect(() => {
     if (error) {
       console.log("Error state updated:", error.message);
@@ -379,11 +384,37 @@ function Homepage({ defaultImage }) {
     // Clear uploaded image if switching away from GPT Image
     if (option !== 'gpt-image-1' && uploadedImage) {
       setUploadedImage(null);
+      setUploadedFile(null);
     }
     
     // Clear any existing errors when changing options
     setError(null);
   };
+const handleQualitySelect = (option) => {
+    setSelectedQuality(option);
+}
+
+  // Create object URL when uploadedFile changes
+  useEffect(() => {
+    if (uploadedFile) {
+      const objectURL = URL.createObjectURL(uploadedFile);
+      setImageToURL(objectURL);
+      console.log('Object URL created:', objectURL);
+      
+      // Cleanup function to revoke the object URL
+      return () => {
+        URL.revokeObjectURL(objectURL);
+        console.log('Object URL revoked:', objectURL);
+      };
+    } else {
+      setImageToURL(null);
+    }
+  }, [uploadedFile]);
+
+  // Console log imageToURL whenever it changes
+  useEffect(() => {
+    console.log('imageToURL:', imageToURL);
+  }, [imageToURL]);
 
   // Handle file uploads
   const handleFileUpload = (e) => {
@@ -397,9 +428,12 @@ function Homepage({ defaultImage }) {
         return;
       }
       
+      // Store the File object for URL creation
+      setUploadedFile(file);
+      
       const reader = new FileReader();
       reader.onload = (e) => {
-        setUploadedImage(e.target.result);
+        setUploadedImage(e.target.result); // Base64 data URL for API calls
         // Clear any existing errors
         setError(null);
       };
@@ -441,7 +475,8 @@ function Homepage({ defaultImage }) {
           userInput: prompt,
           model: selectedOption ? selectedOption : ' --v 6.1',
           // Only include image data if GPT Image is selected and an image is uploaded
-          ...(isGptImageSelected && uploadedImage && { imageData: uploadedImage })
+          ...((isGptImageSelected || isMidVideoImageSelected) && uploadedImage && { imageData: uploadedImage }),
+          ...(selectedQuality  && { quality: selectedQuality })
         }),
       };
 
@@ -477,6 +512,7 @@ function Homepage({ defaultImage }) {
       setImagePrompt(data.prompt);
       setImageType(data.type);
       setUploadedImage(null); // Clear uploaded image after setting the new URL
+      setUploadedFile(null); // Clear uploaded file as well
       window.history.pushState(null, '', `?image=${data.image_message_id}`);
       
       // Log to confirm the URL was set properly
@@ -545,6 +581,7 @@ function Homepage({ defaultImage }) {
       setLoading(false);
       // Clear uploaded image
       setUploadedImage(null);
+      setUploadedFile(null);
       console.timeEnd('ImageCreatedTimer');
     }
   };
@@ -592,7 +629,7 @@ function Homepage({ defaultImage }) {
                 />
                 
                 {/* Camera icon button - only show when GPT Image is selected */}
-                {isGptImageSelected && (
+                {(isGptImageSelected || isMidVideoImageSelected) && (
                   <Button 
                     onClick={triggerFileInput}
                     variant={theme === 'dark' ? 'light' : 'dark'}
@@ -635,11 +672,43 @@ function Homepage({ defaultImage }) {
               <option value="gpt-image-1">GPT Image</option>
               <option value=" --niji 6">niji </option>
               <option value="Dalle 3">Dalle 3</option> 
+              <option value=" --video">Midjourney Video Creation</option>
             </Form.Select>
           </div>
+          {/* Conditional Quality Dropdown - Only for Midjourney (recommended) */}
+          {(selectedOption === '' || !selectedOption) && (
+            <div className="d-flex justify-content-center mb-4">
+              <Form.Select
+                onChange={(e) => handleQualitySelect(e.target.value)}
+                style={{ maxWidth: '300px' }}
+                className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
+                value={selectedQuality}
+              >
+                <option value="--draft">fast</option>
+                <option value="--q 1">Standard</option>
+                <option value="--q 2">High</option>
+                <option value="--q 4">Ultra</option>
+              </Form.Select>
+            </div>
+          )}
+
+          {/* Conditional Motion Dropdown - Only for Midjourney Video Creation */}
+          {selectedOption === ' --video' && (
+            <div className="d-flex justify-content-center mb-4">
+              <Form.Select
+                onChange={(e) => handleQualitySelect(e.target.value)}
+                style={{ maxWidth: '300px' }}
+                className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
+                value={selectedQuality}
+              >
+                <option value="--motion low">Low Motion</option>
+                <option value="--motion high">High Motion</option>
+              </Form.Select>
+            </div>
+          )}
           
           {/* Show GPT Image info when selected */}
-          {isGptImageSelected && (
+          {(isGptImageSelected || isMidVideoImageSelected) && (
             <div className="text-center mb-3 small">
               <p>Upload an image to use as a reference or modify with your prompt</p>
             </div>
