@@ -473,7 +473,7 @@ const handleQualitySelect = (option) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userInput: prompt,
-          model: selectedOption ? selectedOption : ' --v 6.1',
+          model: selectedOption ? selectedOption : ' --v 7',
           // Only include image data if GPT Image is selected and an image is uploaded
           ...((isGptImageSelected || isMidVideoImageSelected) && uploadedImage && { imageData: uploadedImage }),
           ...(selectedQuality  && { quality: selectedQuality })
