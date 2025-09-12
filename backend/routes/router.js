@@ -128,6 +128,7 @@ router.post("/Prompt", async (req, res) => {
   console.log(req.body)
   // console.log(discord.channel)
   try {
+    let a;
     let response;
     let channel;
     let disc_upload_message;
@@ -178,7 +179,7 @@ router.post("/Prompt", async (req, res) => {
 
 
 
-
+     
       var params = {
         username: "someuser",
         image_url:  s3_url,
@@ -281,7 +282,7 @@ router.post("/Prompt", async (req, res) => {
   
   
   
-  
+        
         var params = {
           username: "someuser",
           image_url:  s3_url,
@@ -308,8 +309,10 @@ router.post("/Prompt", async (req, res) => {
       console.log("Midjourney subroutine")
       console.log(req.body)
 
+ const channel = client.channels.cache.get("1103168663617556571")
       if (req.body.imageData){
 
+        
       disc_upload_message = await channel.send({
           content: req.body.userInput,
   
@@ -317,23 +320,23 @@ router.post("/Prompt", async (req, res) => {
       s3_url = await uploadImageFromB64ToS3(req.body.imageData, disc_upload_message.id);
 
 
-      let a =s3_url +" "+ req.body.userInput.trim() + req.body.model
+      a =s3_url +" "+ req.body.userInput.trim() + req.body.model
 
       }
     else{
-      let a = req.body.userInput.trim() + req.body.model
+       a = req.body.userInput.trim() + req.body.model
     }
 
       
       // let a = req.body.userInput.trim() + req.body.model
 
-      const channel = client.channels.cache.get("1103168663617556571")
+      // const channel = client.channels.cache.get("1103168663617556571")
       // console.log(channel)
       console.log(a)
       channel.sendSlash("936929561302675456", "imagine", a)
       channel.send(a)
 
-      let a = req.body.userInput.trim() + req.body.model
+      a = req.body.userInput.trim() + req.body.model
       var midjourneyparams= {}
 
       const filter = (m) => {
