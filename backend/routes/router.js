@@ -307,10 +307,14 @@ router.post("/Prompt", async (req, res) => {
     }
     else {
       console.log("Midjourney subroutine")
-      console.log(req.body)
+      const { imageData, ...bodyWithoutimageData } = req.body;
+      console.log(bodyWithoutimageData);
+
+      
 
  const channel = client.channels.cache.get("1103168663617556571")
       if (req.body.imageData){
+        req.body.quality = req.body.quality ?? " --motion low"
 
         
       disc_upload_message = await channel.send({
@@ -320,12 +324,13 @@ router.post("/Prompt", async (req, res) => {
       s3_url = await uploadImageFromB64ToS3(req.body.imageData, disc_upload_message.id);
 
 
-      a =s3_url +" "+ req.body.userInput.trim() + req.body.model
+      a =s3_url +" "+ req.body.userInput.trim() + req.body.quality + req.body.model
 
       }
     else{
-       a = req.body.userInput.trim() + req.body.model
+       a = req.body.userInput.trim() + req.body.quality + req.body.model
     }
+    // BEWARE it rearanges the order of the commands. Sends --video to the end
 
       
       // let a = req.body.userInput.trim() + req.body.model
@@ -336,11 +341,14 @@ router.post("/Prompt", async (req, res) => {
       channel.sendSlash("936929561302675456", "imagine", a)
       channel.send(a)
 
-      a = req.body.userInput.trim() + req.body.model
+      a = req.body.userInput.trim()
       var midjourneyparams= {}
+      
+
+      const regexFilter = new RegExp(`\\*\\*?[^*]*${a}[^*]*\\*?\\*?`, "i");
 
       const filter = (m) => {
-        if (m.content.startsWith(`**${a}`) && m.attachments.size == 1 && m.author.id == "936929561302675456") return true;
+        if (m.content.match(regexFilter) && m.attachments.size == 1 && m.author.id == "936929561302675456") return true;
         try {
         if (m.embeds[0].footer.text.includes(`${a}`) && m.author.id == "936929561302675456") return 'dogwater';
         }
@@ -357,7 +365,7 @@ router.post("/Prompt", async (req, res) => {
         .awaitMessages({ filter, max: 1, time: 120_000, errors: ["time"] })
         //   .then(collected=> response.render(__dirname + "/index.ejs", {name:collected.first().attachments.first().url,message_id: collected.first().id}))
         .then((collected) => {
-          // console.log(collected.first())
+          console.log(collected.first())
 
           if (collected.first().embeds.length > 0) {
             if (collected.first().embeds[0].title == 'Banned prompt detected') {
@@ -373,6 +381,7 @@ router.post("/Prompt", async (req, res) => {
             }
             
           }
+          console.log('this far----')
           let imageUrl = collected.first().attachments.first().url;
           const imageMessageId = collected.first().id;
           // function that checks if process.env.env is production or development
@@ -381,31 +390,9 @@ router.post("/Prompt", async (req, res) => {
             return process.env.env === 'production';
           }
 
-
-          if (req.body.imageData){
-            const midjourneyJobId = imageUrl.split('_').pop().split('.webp')[0];
-
-            midjourneyparams = {
-            username: "someuser",
-            image_url: imageUrl,
-            image_message_id: collected.first().id,
-            prompt: a,
-            type: "Original",
-            time: collected.first().createdTimestamp,
-            local_file_path: localFilePath
-
-
-            
-          }
-
-
-
-
-
-
-          }
-
+          
           if (isProduction()) {
+            console.log('production!')
             localFilePath = `../images/${imageMessageId}.png`;
             imageUrl = `https://bionic-crayons.com/images/${imageMessageId}.png`;
           }
@@ -413,6 +400,19 @@ router.post("/Prompt", async (req, res) => {
             localFilePath = `../images/${imageMessageId}.png`;
 
           }
+
+          let midjourneyJobId
+          let isVideo = false
+          if (req.body.imageData){
+            midjourneyJobId = imageUrl.split('_').pop().split('.webp')[0];
+            midjourneywebsiteurl = `https://www.midjourney.com/jobs/${midjourneyJobId}`
+            // imageUrl= `https://bionic-crayons.com/images/${imageMessageId}.mp4`
+            isVideo = "Video"
+
+
+
+          }
+
 
 
           if (!fs.existsSync('../images')) {
@@ -424,9 +424,11 @@ router.post("/Prompt", async (req, res) => {
             image_url: imageUrl,
             image_message_id: collected.first().id,
             prompt: a,
-            type: "Original",
+            type:  isVideo ?? "Original",
             time: collected.first().createdTimestamp,
-            local_file_path: localFilePath
+            local_file_path: localFilePath,
+            midjourneywebsiteurl: midjourneywebsiteurl ?? undefined
+
 
 
             

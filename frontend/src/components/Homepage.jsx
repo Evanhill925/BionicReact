@@ -340,12 +340,16 @@ function Homepage({ defaultImage }) {
   const [loading, setLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null); // Store the actual File object
-  const [imageToURL, setImageToURL] = useState(null); // Store the object URL
+  // const [imageToURL, setImageToURL] = useState(null); // Store the object URL
   const fileInputRef = useRef(null);
   const { theme } = useTheme();
   const [error, setError] = useState(null);
-  const [selectedQuality, setSelectedQuality] = useState(); // Default to medium quality
+  const [selectedQuality, setSelectedQuality] = useState(""); // Default to medium quality
   const uriPath = import.meta.env.VITE_uriPath;
+
+  //ian added this 
+  const [midURL, setMidURL] = useState('');
+
 
   // Check if GPT Image is selected
   const isGptImageSelected = selectedOption === 'gpt-image-1';
@@ -394,27 +398,27 @@ const handleQualitySelect = (option) => {
     setSelectedQuality(option);
 }
 
-  // Create object URL when uploadedFile changes
-  useEffect(() => {
-    if (uploadedFile) {
-      const objectURL = URL.createObjectURL(uploadedFile);
-      setImageToURL(objectURL);
-      console.log('Object URL created:', objectURL);
+  // // Create object URL when uploadedFile changes
+  // useEffect(() => {
+  //   if (uploadedFile) {
+  //     const objectURL = URL.createObjectURL(uploadedFile);
+  //     setImageToURL(objectURL);
+  //     console.log('Object URL created:', objectURL);
       
-      // Cleanup function to revoke the object URL
-      return () => {
-        URL.revokeObjectURL(objectURL);
-        console.log('Object URL revoked:', objectURL);
-      };
-    } else {
-      setImageToURL(null);
-    }
-  }, [uploadedFile]);
+  //     // Cleanup function to revoke the object URL
+  //     return () => {
+  //       URL.revokeObjectURL(objectURL);
+  //       console.log('Object URL revoked:', objectURL);
+  //     };
+  //   } else {
+  //     setImageToURL(null);
+  //   }
+  // }, [uploadedFile]);
 
-  // Console log imageToURL whenever it changes
-  useEffect(() => {
-    console.log('imageToURL:', imageToURL);
-  }, [imageToURL]);
+  // // Console log imageToURL whenever it changes
+  // useEffect(() => {
+  //   console.log('imageToURL:', imageToURL);
+  // }, [imageToURL]);
 
   // Handle file uploads
   const handleFileUpload = (e) => {
@@ -504,6 +508,11 @@ const handleQualitySelect = (option) => {
       //     details: data
       //   };
       // }
+
+
+      // Adding midjourneyurl
+      data?.midjourneywebsiteurl && setMidURL(data.midjourneywebsiteurl);
+
       
       // Update all state variables in a single batch
       // This ensures React processes the state changes correctly
@@ -684,10 +693,10 @@ const handleQualitySelect = (option) => {
                 className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
                 value={selectedQuality}
               >
-                <option value="--draft">fast</option>
-                <option value="--q 1">Standard</option>
-                <option value="--q 2">High</option>
-                <option value="--q 4">Ultra</option>
+                <option value=" --draft">fast</option>
+                <option value=" --q 1">Standard</option>
+                <option value=" --q 2">High</option>
+                <option value=" --q 4">Ultra</option>
               </Form.Select>
             </div>
           )}
@@ -701,8 +710,8 @@ const handleQualitySelect = (option) => {
                 className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
                 value={selectedQuality}
               >
-                <option value="--motion low">Low Motion</option>
-                <option value="--motion high">High Motion</option>
+                <option value=" --motion low">Low Motion</option>
+                <option value=" --motion high">High Motion</option>
               </Form.Select>
             </div>
           )}
@@ -786,9 +795,22 @@ const handleQualitySelect = (option) => {
                 </a>
               ) : null}
             </Card.Body>
+
+            {/* Shows the link to the midjourney url when its not working.*/}
+          {(["Video"].includes(imageType) ) && (
+            <div className="text-center mb-3 mt-4 small">
+              <p>Your full sized sharable video at :</p>
+               <a 
+                  href={midURL} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-600 hover:underline"
+              > {midURL}</a>  
+            </div>
+          )}
             
             {/* Action buttons - only show for generated images with valid type */}
-            {![null, "Upscale"].includes(imageType) && imageURL && (
+            {![null, "Upscale","Video"].includes(imageType) && imageURL && (
               <Card.Footer className={`border-0 text-center py-3 ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
                 <ButtonGroup className="flex-wrap">
                   {buttonLabels.map((label) => {
