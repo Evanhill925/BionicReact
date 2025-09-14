@@ -477,7 +477,7 @@ const handleQualitySelect = (option) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userInput: prompt,
-          model: selectedOption ? selectedOption : ' --v 6.1',
+          model: selectedOption ? selectedOption : ' --v 7',
           // Only include image data if GPT Image is selected and an image is uploaded
           ...((isGptImageSelected || isMidVideoImageSelected) && uploadedImage && { imageData: uploadedImage }),
           ...(selectedQuality  && { quality: selectedQuality })
@@ -754,60 +754,80 @@ const handleQualitySelect = (option) => {
             
             {/* Image display - shows either uploaded image or generated image */}
             <Card.Body className="p-0 d-flex justify-content-center">
-              {uploadedImage ? (
-                /* Show uploaded image */
-                <Card.Img
-                  src={uploadedImage}
-                  alt="Uploaded image"
-                  className="img-fluid rounded shadow"
-                  style={{ maxHeight: '80vh' }}
-                />
-              ) : imageURL ? (
-                /* Show generated/API image */
-                <a href={imageURL} target="_blank" rel="noopener noreferrer">
-                  <Card.Img
-                    key={Date.now() + imageURL} /* Add timestamp to key to force re-render */
-                    src={imageURL}
-                    alt="Generated image"
-                    className="img-fluid rounded shadow"
-                    style={{ maxHeight: '80vh' }}
-                    onError={() => {
-                      setError({
-                        message: "Failed to load the generated image. The server might be busy or the image URL is invalid.",
-                      });
-                    }}
-                  />
-                </a>
-              ) : defaultImage && defaultImage.image_url ? (
-                /* Show default image as fallback */
-                <a href={defaultImage.image_url} target="_blank" rel="noopener noreferrer">
-                  <Card.Img
-                    src={defaultImage.image_url}
-                    alt="Default image"
-                    className="img-fluid rounded shadow"
-                    style={{ maxHeight: '80vh' }}
-                    onError={() => {
-                      setError({
-                        message: "Failed to load the default image.",
-                      });
-                    }}
-                  />
-                </a>
-              ) : null}
-            </Card.Body>
+  {uploadedImage ? (
+    /* Show uploaded image */
+    <Card.Img
+      src={uploadedImage}
+      alt="Uploaded image"
+      className="img-fluid rounded shadow"
+      style={{ maxHeight: "80vh" }}
+    />
+  ) : imageURL ? (
+    /* Show generated/API media */
+    (() => {
+      const isVideo = imageURL.match(/\.(mp4|webm|ogg)$/i);
+      return isVideo ? (
+        <a href={imageURL} target="_blank" rel="noopener noreferrer">
+           <video
+            src={imageURL}
+            // controls adds ui control for video player
+            autoPlay
+            muted
+            loop
+            className="img-fluid rounded shadow"
+            style={{ maxHeight: "80vh" }}
+          />
+        </a>
+      ) : (
+        <a href={imageURL} target="_blank" rel="noopener noreferrer">
+          <Card.Img
+            key={Date.now() + imageURL} // force re-render
+            src={imageURL}
+            alt="Generated image"
+            className="img-fluid rounded shadow"
+            style={{ maxHeight: "80vh" }}
+            onError={() =>
+              setError({
+                message:
+                  "Failed to load the generated image. The server might be busy or the URL is invalid.",
+              })
+            }
+          />
+        </a>
+      );
+    })()
+  ) : defaultImage && defaultImage.image_url ? (
+    /* Show default media as fallback */
+    (() => {
+      const isVideo = defaultImage.image_url.match(/\.(mp4|webm|ogg)$/i);
+      return isVideo ? (
+        <a href={defaultImage.image_url} target="_blank" rel="noopener noreferrer">
+          <video
+            src={defaultImage.image_url}
+            controls
+            className="img-fluid rounded shadow"
+            style={{ maxHeight: "80vh" }}
+          />
+        </a>
+      ) : (
+        <a href={defaultImage.image_url} target="_blank" rel="noopener noreferrer">
+          <Card.Img
+            src={defaultImage.image_url}
+            alt="Default image"
+            className="img-fluid rounded shadow"
+            style={{ maxHeight: "80vh" }}
+            onError={() =>
+              setError({
+                message: "Failed to load the default image.",
+              })
+            }
+          />
+        </a>
+      );
+    })()
+  ) : null}
+</Card.Body>
 
-            {/* Shows the link to the midjourney url when its not working.*/}
-          {(["Video"].includes(imageType) ) && (
-            <div className="text-center mb-3 mt-4 small">
-              <p>Your full sized sharable video at :</p>
-               <a 
-                  href={midURL} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-blue-600 hover:underline"
-              > {midURL}</a>  
-            </div>
-          )}
             
             {/* Action buttons - only show for generated images with valid type */}
             {![null, "Upscale","Video"].includes(imageType) && imageURL && (
