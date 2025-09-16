@@ -344,7 +344,8 @@ function Homepage({ defaultImage }) {
   const fileInputRef = useRef(null);
   const { theme } = useTheme();
   const [error, setError] = useState(null);
-  const [selectedQuality, setSelectedQuality] = useState(""); // Default to medium quality
+  const [selectedQuality, setSelectedQuality] = useState(" --q 1"); // Default quality for Midjourney
+  const [selectedMotion, setSelectedMotion] = useState(" --motion low"); // Default motion for Video Creation
   const uriPath = import.meta.env.VITE_uriPath;
 
   //ian added this 
@@ -353,7 +354,7 @@ function Homepage({ defaultImage }) {
 
   // Check if GPT Image is selected
   const isGptImageSelected = selectedOption === 'gpt-image-1';
-  const isMidVideoImageSelected = selectedOption === " --video"
+  const isMidVideoImageSelected = selectedOption === " --video --bs 2"
 
 
 
@@ -391,11 +392,32 @@ function Homepage({ defaultImage }) {
       setUploadedFile(null);
     }
     
+    // Reset quality/motion states when switching models
+    if (option === ' --video --bs 2') {
+      // Switching to video - reset quality and set default motion
+      setSelectedQuality('');
+      setSelectedMotion(' --motion low');
+    } else {
+      // Switching to other models - reset motion and set default quality
+      setSelectedMotion('');
+      if (option === '' || !option) {
+        // Default Midjourney - set default quality
+        setSelectedQuality(' --q 1');
+      } else {
+        // Other models - clear quality
+        setSelectedQuality('');
+      }
+    }
+    
     // Clear any existing errors when changing options
     setError(null);
   };
 const handleQualitySelect = (option) => {
     setSelectedQuality(option);
+}
+
+const handleMotionSelect = (option) => {
+    setSelectedMotion(option);
 }
 
   // // Create object URL when uploadedFile changes
@@ -480,7 +502,15 @@ const handleQualitySelect = (option) => {
           model: selectedOption ? selectedOption : ' --v 7',
           // Only include image data if GPT Image is selected and an image is uploaded
           ...((isGptImageSelected || isMidVideoImageSelected) && uploadedImage && { imageData: uploadedImage }),
-          ...(selectedQuality  && { quality: selectedQuality })
+          // Send appropriate quality parameter based on model
+          ...(() => {
+            if (selectedOption === ' --video --bs 2' && selectedMotion) {
+              return { quality: selectedMotion };
+            } else if ((selectedOption === '' || !selectedOption) && selectedQuality) {
+              return { quality: selectedQuality };
+            }
+            return {};
+          })()
         }),
       };
 
@@ -681,7 +711,7 @@ const handleQualitySelect = (option) => {
               <option value="gpt-image-1">GPT Image</option>
               <option value=" --niji 6">niji </option>
               <option value="Dalle 3">Dalle 3</option> 
-              <option value=" --video">Midjourney Video Creation</option>
+              <option value=" --video --bs 2">Midjourney Video Creation</option>
             </Form.Select>
           </div>
           {/* Conditional Quality Dropdown - Only for Midjourney (recommended) */}
@@ -702,13 +732,13 @@ const handleQualitySelect = (option) => {
           )}
 
           {/* Conditional Motion Dropdown - Only for Midjourney Video Creation */}
-          {selectedOption === ' --video' && (
+          {selectedOption === ' --video --bs 2' && (
             <div className="d-flex justify-content-center mb-4">
               <Form.Select
-                onChange={(e) => handleQualitySelect(e.target.value)}
+                onChange={(e) => handleMotionSelect(e.target.value)}
                 style={{ maxWidth: '300px' }}
                 className={theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}
-                value={selectedQuality}
+                value={selectedMotion}
               >
                 <option value=" --motion low">Low Motion</option>
                 <option value=" --motion high">High Motion</option>
@@ -826,12 +856,27 @@ const handleQualitySelect = (option) => {
       );
     })()
   ) : null}
+  
 </Card.Body>
 
+            {/* Midjourney Website Link - Only show when Midjourney Video Creation is selected */}
+            {midURL && isMidVideoImageSelected && (
+              <Card.Footer className={`border-0 text-center py-2 ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
+                <a
+                  href={midURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`text-decoration-none ${theme === 'dark' ? 'text-info' : 'text-primary'}`}
+                  style={{ fontSize: '0.9rem' }}
+                >
+                  View your creation on the Midjourney Website
+                </a>
+              </Card.Footer>
+            )}
             
             {/* Action buttons - only show for generated images with valid type */}
             {![null, "Upscale","Video"].includes(imageType) && imageURL && (
-              <Card.Footer className={`border-0 text-center py-3 ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
+              <Card.Footer className={`border-0 text-center py-3 ${theme === 'dark' ? 'bg-dark' : 'bg-light'} ${midURL ? 'border-top' : ''}`}>
                 <ButtonGroup className="flex-wrap">
                   {buttonLabels.map((label) => {
                     const isU = label.startsWith("U");
@@ -851,11 +896,13 @@ const handleQualitySelect = (option) => {
                     );
                   })}
                 </ButtonGroup>
+                  
               </Card.Footer>
             )}
           </Card>
         )
       )}
+      
     </Container>
     </>
   );
