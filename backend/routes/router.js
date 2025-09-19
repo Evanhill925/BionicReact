@@ -402,6 +402,7 @@ router.post("/Prompt", async (req, res) => {
           }
 
           let midjourneyJobId
+          let midjourneywebsiteurl
           let isVideo = false
           if (req.body.imageData){
             midjourneyJobId = imageUrl.split('_').pop().split('.webp')[0];

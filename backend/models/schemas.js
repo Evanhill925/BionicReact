@@ -10,6 +10,7 @@ const midSchema = new mongoose.Schema({
   origin_id: { type: String },
   time: { type: String },
   quadrant: { type: String },
+  midjourneywebsiteurl: { type: String },
 })
 const Entry = mongoose.model("userInstruction", midSchema)
 const mySchemas = { Entry: Entry }

@@ -371,11 +371,21 @@ function Homepage({ defaultImage }) {
       setImageURL(defaultImage.image_url);
       setImageID(defaultImage.image_message_id);
       setImageType(defaultImage.type);
+      
+      // Set midURL if the defaultImage has a midjourneywebsiteurl (for existing videos)
+      if (defaultImage.midjourneywebsiteurl) {
+        setMidURL(defaultImage.midjourneywebsiteurl);
+      } else {
+        // Clear midURL if switching to an image that doesn't have one
+        setMidURL('');
+      }
     }
     
     // If we have an uploaded image, clear any default or previously generated image
     if (uploadedImage) {
       setImageURL('');
+      // Clear midURL when showing uploaded image
+      setMidURL('');
     }
   }, [defaultImage, imageURL, uploadedImage]);
 
@@ -485,10 +495,17 @@ const handleMotionSelect = (option) => {
     // Validate input
     if (loading) return;
 
-  if (!prompt && !uploadedImage) {
-    setError({ message: 'Please enter a prompt or upload an image.' })
-    return;
-  }
+    // Special validation for video creation - requires both prompt and image
+    if (isMidVideoImageSelected && (!prompt || !uploadedImage)) {
+      setError({ message: 'Video creation requires both a prompt and an uploaded image.' })
+      return;
+    }
+
+    // General validation for other models
+    if (!prompt && !uploadedImage) {
+      setError({ message: 'Please enter a prompt or upload an image.' })
+      return;
+    }
     setLoading(true);
     setError(null);
     console.time('ImageCreatedTimer');
@@ -613,6 +630,8 @@ const handleMotionSelect = (option) => {
       setImageID(data.image_message_id);
       setImageURL(data.image_url);
       setImageType(data.type);
+      // Clear midURL for button-generated images (they don't have Midjourney URLs)
+      setMidURL('');
     } catch (error) {
       console.error('Error fetching image:', error);
       setError(error);
@@ -859,8 +878,8 @@ const handleMotionSelect = (option) => {
   
 </Card.Body>
 
-            {/* Midjourney Website Link - Only show when Midjourney Video Creation is selected */}
-            {midURL && isMidVideoImageSelected && (
+            {/* Midjourney Website Link - Show for any video format when midURL is available */}
+            {midURL && (
               <Card.Footer className={`border-0 text-center py-2 ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
                 <a
                   href={midURL}
